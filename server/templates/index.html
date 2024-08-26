@@ -5,13 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mi Proyecto Flask</title>
     <!-- Incluir CSS -->
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-    <!-- <link rel="stylesheet" href="../static/styles.css"> -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>¡Hola, mundo!</h1>
-    <!-- Incluir JS -->
-    <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
-    <!-- <script src="../static/main.js"></script> -->
+    <h1>Listado de ESP Conectados</h1>
+    <ul id="espList">
+        <!-- Aquí se cargará el listado de ESP -->
+    </ul>
+    
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
 </body>
 </html>
