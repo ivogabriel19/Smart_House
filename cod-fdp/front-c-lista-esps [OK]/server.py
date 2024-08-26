@@ -1,4 +1,4 @@
-from flask import Flask, jsonify
+from flask import Flask, jsonify, render_template
 
 app = Flask(__name__)
 
@@ -8,6 +8,10 @@ esp_list = [
     {"id": "ESP2", "ip": "192.168.1.102"},
     {"id": "ESP3", "ip": "192.168.1.103"},
 ]
+
+@app.route('/')
+def index():
+    return render_template('index.html')
 
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
