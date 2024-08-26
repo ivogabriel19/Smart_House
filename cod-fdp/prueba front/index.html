@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casa Inteligente</title>
+    <link rel="stylesheet" href="../static/desarrollo/style.css">
+</head>
+<body>
+    <aside>
+        <h2>Menú</h2>
+        <button class="button" onclick="showSection('dashboard')">Dashboard</button>
+        <button class="button" onclick="showSection('lighting')">Iluminación</button>
+        <button class="button" onclick="showSection('security')">Seguridad</button>
+        <button class="button" onclick="showSection('garden')">Jardín</button>
+    </aside>
+    <main>
+        <h1>Control de Casa Inteligente</h1>
+        <div id="dashboard" class="section">
+            <div class="card">
+                <h2>Resumen de Sensores</h2>
+                <div class="grid" id="sensorSummary"></div>
+            </div>
+            <div class="card">
+                <h2>Consumo de Energía</h2>
+                <div id="energyChart"></div>
+            </div>
+            <div class="card">
+                <h2>Registro de Acceso</h2>
+                <ul id="accessLog"></ul>
+            </div>
+        </div>
+
+        <div id="lighting" class="section" style="display:none;">
+            <div class="card">
+                <h2>Control de Iluminación</h2>
+                <select id="roomSelect"></select>
+                <div id="lightingControls"></div>
+            </div>
+        </div>
+
+        <div id="security" class="section" style="display:none;">
+            <div class="card">
+                <h2>Registro de Acceso</h2>
+                <ul id="securityAccessLog"></ul>
+            </div>
+        </div>
+        
+        <div id="garden" class="section" style="display:none;">
+            <div class="card">
+                <h2>Control del Jardín</h2>
+                <div id="gardenInfo"></div>
+                <button class="button" onclick="startWatering()">Iniciar Riego</button>
+            </div>
+        </div>
+    </main>
+
+    <script src="../static/desarrollo/script.js"></script>
+</body>
+</html>
