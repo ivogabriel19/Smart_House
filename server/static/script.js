@@ -4,9 +4,10 @@ function fetchESPList() {
         .then(data => {
             const espList = document.getElementById('espList');
             espList.innerHTML = ''; // Limpiar la lista actual
-            data.forEach(esp => {
+            data.keys(ESP).forEach(key => {
+                const details = ESP[key];
                 const li = document.createElement('li');
-                li.textContent = `ESP ID: ${esp.id}, IP: ${esp.ip}`;
+                li.textContent = `ESP ID: ${key}, IP: ${details.ip}, Status: ${details.status}`;
                 espList.appendChild(li);
             });
         })
