@@ -6,20 +6,19 @@ function fetchESPList() {
             const espList = document.getElementById('espList');
             espList.innerHTML = ''; // Limpiar la lista actual
 
-            data.forEach(dispositivo => {
-                // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
-                Object.keys(dispositivo).forEach(key => {
-                    const details = dispositivo[key];
-                    console.log(`Device: ${key}`);
-                    console.log(`IP: ${details.ip}`);
-                    console.log(`Status: ${details.status}`);
-                    console.log('-------------');
-
-                    const li = document.createElement('li');
-                    li.textContent = `ESP ID: ${key}, IP: ${details.ip}, Status: ${details.status}`;
-                    espList.appendChild(li);
-                });
+            // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
+            Object.keys(data).forEach(key => {
+                const details = data[key];
+                console.log(`Device: ${key}`);
+                console.log(`IP: ${details.ip}`);
+                console.log(`Status: ${details.status}`);
+                console.log('-------------');
+                
+                const li = document.createElement('li');
+                li.textContent = `ESP ID: ${key}, IP: ${details.ip}, Status: ${details.status}`;
+                espList.appendChild(li);
             });
+            
         })
         .catch(error => {
             console.error('Error fetching ESP list:', error);
