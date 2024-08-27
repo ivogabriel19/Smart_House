@@ -1,15 +1,3 @@
-dispositivos.forEach(dispositivo => {
-    // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
-    Object.keys(dispositivo).forEach(key => {
-        const { ip, status } = dispositivo[key];
-        console.log(`Device: ${key}`);
-        console.log(`IP: ${ip}`);
-        console.log(`Status: ${status}`);
-        console.log('-------------');
-    });
-});
-
-
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
