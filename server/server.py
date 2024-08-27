@@ -6,13 +6,6 @@ app = Flask(__name__)
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {}
 
-# Ejemplo de datos de ESP conectados
-esp_list = [
-    {"id": "ESP1", "ip": "192.168.1.101"},
-    {"id": "ESP2", "ip": "192.168.1.102"},
-    {"id": "ESP3", "ip": "192.168.1.103"},
-]
-
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
@@ -20,7 +13,7 @@ def index():
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
-    return jsonify(esp_list)
+    return jsonify(esp32_devices)
 
 @app.route('/register', methods=['POST'])
 def register_device():

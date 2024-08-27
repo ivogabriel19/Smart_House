@@ -15,7 +15,7 @@ function fetchESPList() {
                 console.log('-------------');
                 
                 const li = document.createElement('li');
-                li.textContent = `ESP ID: ${key}, IP: ${details.ip}, Status: ${details.status}`;
+                li.textContent = `ESP ID: ${key} || IP: ${details.ip}, Status: ${details.status}`;
                 espList.appendChild(li);
             });
             
