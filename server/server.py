@@ -6,6 +6,9 @@ app = Flask(__name__)
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {}
 
+# Variable global para almacenar el estado del botón
+button_state = "OFF"
+
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
@@ -43,6 +46,14 @@ def send_command(device_id):
             return jsonify({"status": "error", "message": str(e)}), 500
     else:
         return jsonify({"status": "error", "message": "Dispositivo no encontrado"}), 404
+
+@app.route('/update_button', methods=['POST'])
+def update_button():
+    global button_state
+    data = request.json  # Obtener los datos enviados desde el frontend
+    button_state = data.get('state', 'OFF')  # Obtener el estado del botón
+    print(f"Estado del botón recibido: {button_state}")
+    return jsonify({"message": "Estado del botón actualizado", "state": button_state})
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)

@@ -1,3 +1,5 @@
+let buttonState = "OFF";
+
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
@@ -23,6 +25,28 @@ function fetchESPList() {
         .catch(error => {
             console.error('Error fetching ESP list:', error);
         });
+}
+
+function toggleButtonState() {
+    // Cambia el estado del botón
+    buttonState = buttonState === "OFF" ? "ON" : "OFF";
+    document.getElementById('toggleButton').innerText = buttonState;
+
+    // Envía el estado del botón al servidor Flask
+    fetch('/update_button', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ state: buttonState }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 }
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
