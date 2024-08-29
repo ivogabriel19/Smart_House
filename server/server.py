@@ -1,7 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 import requests
+from flask_socketio import SocketIO, send, emit
 
 app = Flask(__name__)
+socketio = SocketIO(app)
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {}
@@ -73,6 +75,9 @@ def update_TyH():
     hum = data.get('humedad')
     datoTemp = temp
     datoHum = hum
+
+    socketio.emit('sensor_update', data)
+
     print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
 
@@ -82,5 +87,17 @@ def send_TyH():
     global hum
     return jsonify({"temperatura": str(temp) + "º", "humedad": str(hum) + "%"}), 200
 
+# Evento para conexión
+@socketio.on('connect')
+def handle_connect():
+    print('Cliente conectado')
+    emit('connected', {'data': 'Conectado al servidor Flask'})
+
+# Evento para desconexión
+@socketio.on('disconnect')
+def handle_disconnect():
+    print('Cliente desconectado')
+
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
+#    app.run(host='0.0.0.0', port=5000)
+    socketio.run(app, debug=True)
