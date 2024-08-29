@@ -84,5 +84,5 @@ function fetchSensorData() {
 }
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
-window.onload = fetchESPList();
-setInterval(fetchSensorData(), 5000);
+window.onload = fetchESPList;
+setInterval(fetchSensorData, 5000);
