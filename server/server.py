@@ -74,7 +74,7 @@ def update_TyH():
     print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
 
-@app.route('get-TyH', methods=["GET"])
+@app.route('/get-TyH', methods=['GET'])
 def send_TyH():
     global temp
     global hum
