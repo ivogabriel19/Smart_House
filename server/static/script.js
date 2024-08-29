@@ -49,28 +49,20 @@ function toggleButtonState() {
     });
 }
 
-// script.js
-document.addEventListener('DOMContentLoaded', function () {
-    // Función para simular la obtención de datos JSON desde el servidor
-    function fetchSensorData() {
-        // Supongamos que este JSON se obtiene de una respuesta HTTP desde un servidor Flask
-        const sensorData = {
-            "temperatura": "29.6º",
-            "humedad": "50.0%"
-        };
+// Función para simular la obtención de datos JSON desde el servidor
+function dummy_fetchSensorData() {
+    // Supongamos que este JSON se obtiene de una respuesta HTTP desde un servidor Flask
+    const sensorData = {
+        "temperatura": "29.6º",
+        "humedad": "50.0%"
+    };
 
-        // Actualiza el contenido de los elementos del DOM
-        document.getElementById('temperature').innerText = sensorData.temperatura;
-        document.getElementById('humidity').innerText = sensorData.humedad;
-    }
-
-    // Llama a la función para actualizar los datos inmediatamente al cargar la página
-    fetchSensorData();
-
-    // Puedes configurar la función para que actualice los datos cada cierto tiempo, por ejemplo, cada 5 segundos
-    setInterval(fetchSensorData, 5000);
-});
-
+    // Actualiza el contenido de los elementos del DOM
+    document.getElementById('temperature').innerText = sensorData.temperatura;
+    document.getElementById('humidity').innerText = sensorData.humedad;
+}
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = fetchESPList;
+window.onload = dummy_fetchSensorData;
+setInterval(fetchSensorData, 5000);
