@@ -21,34 +21,40 @@ void setup() {
 
     // Registro en el servidor
     if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient http;
-        http.begin(String(serverName) + "/register");
-        http.addHeader("Content-Type", "application/json");
+        HTTPClient request;
+        request.begin(String(serverName) + "/register");
+        request.addHeader("Content-Type", "application/json");
 
         String postData = "{\"device_id\":\"" + device_id + "\"}";
-        int httpResponseCode = http.POST(postData);
+        int httpResponseCode = request.POST(postData);
 
         if (httpResponseCode > 0) {
-        String response = http.getString();
+        String response = request.getString();
         Serial.println(httpResponseCode);
         Serial.println(response);
         } else {
         Serial.print("Error en la conexión: ");
         Serial.println(httpResponseCode);
         }
-        http.end();
+        request.end();
     }
 }
 
 void loop() {
+    // getValorESP();
+    delay(5000);  // Espera antes de verificar nuevamente
+}
+
+
+
+void getValorESP(){ //ejemplo de GET Request
   // Aquí se verifica si hay una nueva petición del servidor
-    /*
-    HTTPClient http;
-    http.begin(String(serverName) + "/send_command/" + device_id);
-    int httpResponseCode = http.GET();
+    HTTPClient request;
+    request.begin(String(serverName) + "/send_command/" + device_id);
+    int httpResponseCode = request.GET();
 
     if (httpResponseCode > 0) {
-        String payload = http.getString();
+        String payload = request.getString();
         Serial.println(payload);
 
         // Aquí se procesa el valor recibido para el actuador
@@ -59,7 +65,5 @@ void loop() {
         Serial.println(httpResponseCode);
     }
     
-    http.end();
-  */
-    delay(5000);  // Espera antes de verificar nuevamente
+    request.end();
 }
