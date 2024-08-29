@@ -9,6 +9,9 @@ esp32_devices = {}
 # Variable global para almacenar el estado del botón
 button_state = "OFF"
 
+temp = 0.0
+hum = 0.0
+
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
@@ -18,6 +21,7 @@ def index():
 def get_esp_list():
     return jsonify(esp32_devices)
 
+#ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
 def register_device():
     data = request.json
@@ -32,6 +36,7 @@ def register_device():
     else:
         return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
 
+# FIXME:
 @app.route('/send_command/<device_id>', methods=['POST'])
 def send_command(device_id):
     if device_id in esp32_devices:
@@ -47,6 +52,7 @@ def send_command(device_id):
     else:
         return jsonify({"status": "error", "message": "Dispositivo no encontrado"}), 404
 
+#ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():
     global button_state
@@ -55,16 +61,24 @@ def update_button():
     print(f"Estado del botón recibido: {button_state}")
     return jsonify({"message": "Estado del botón actualizado", "state": button_state})
 
-
+#ruta que recibe los valores de temperatura y humedad de un ESP
 @app.route('/post-TyH', methods=['POST'])
 def update_TyH():
+    global temp
+    global hum
     data = request.json  # Obtener los datos enviados desde el frontend
-    datoTemp = data.get('temperatura')
-    datoHum = data.get('humedad')
+    temp = data.get('temperatura')
+    hum = data.get('humedad')
+    datoTemp = temp
+    datoHum = hum
     print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
 
-
+@app.route('get-TyH', methods=["GET"])
+def send_TyH():
+    global temp
+    global hum
+    return jsonify({"temperatura":"{temp}", "humedad": "{hum}"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
