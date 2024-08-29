@@ -75,8 +75,8 @@ function fetchSensorData() {
     });
 
     // Actualiza el contenido de los elementos del DOM
-    document.getElementById('temperature').innerText = sensorData.temperatura;
-    document.getElementById('humidity').innerText = sensorData.humedad;
+    document.getElementById('temperature').innerText = data.temperatura;
+    document.getElementById('humidity').innerText = data.humedad;
 }
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
