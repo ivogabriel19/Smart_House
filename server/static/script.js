@@ -68,9 +68,9 @@ function fetchSensorData() {
     fetch('/get-TyH')
         .then(response => response.json())
         .then(data => {
-            console.log('Respuesta del servidor:', data);
-            console.log('Temperatura:', data.temperatura);
-            console.log('Humedad:', data.humedad);
+            console.log('GET TyH c/5s:', data);
+            // console.log('Temperatura:', data.temperatura);
+            // console.log('Humedad:', data.humedad);
 
             
             // Actualiza el contenido de los elementos del DOM
