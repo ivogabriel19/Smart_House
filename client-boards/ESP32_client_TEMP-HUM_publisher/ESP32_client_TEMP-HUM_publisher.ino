@@ -70,20 +70,20 @@ void postTempHum(){
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient request;
         request.begin(String(serverName) + "/post-TyH");
-        http.addHeader("Content-Type", "application/json"); // Añade el tipo de contenido a la solicitud
+        request.addHeader("Content-Type", "application/json"); // Añade el tipo de contenido a la solicitud
 
         // Datos que quieres enviar (JSON)
-        String postData = "{\"sensor\":\"temperatura\",\"valor\":24.5}";
+        String postData = "{\"temperatura\":\""+ t +"\",\"humedad\": "+ h +"}";
 
-        int httpCode = http.POST(postData); // Realiza la solicitud POST
+        int httpCode = request.POST(postData); // Realiza la solicitud POST
 
         if (httpCode > 0) {
-        String payload = http.getString(); // Obtiene el cuerpo de la respuesta
+        String payload = request.getString(); // Obtiene el cuerpo de la respuesta
         Serial.println(payload); // Imprime la respuesta en la consola
         } else {
             Serial.println("Error en la solicitud POST");
         }
 
-        http.end(); // Cierra la conexión
+        request.end(); // Cierra la conexión
     }
 }
