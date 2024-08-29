@@ -78,7 +78,7 @@ def update_TyH():
 def send_TyH():
     global temp
     global hum
-    return jsonify({"temperatura":{temp}, "humedad": {hum}}), 200
+    return jsonify({"temperatura": str(temp) + "º", "humedad": str(hum) + "%"}), 200
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
