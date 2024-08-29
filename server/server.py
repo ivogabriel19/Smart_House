@@ -19,6 +19,8 @@ def index():
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
+    print("ESP registrados: ")
+    print(esp32_devices)
     return jsonify(esp32_devices)
 
 #ruta para que se registren los ESP
