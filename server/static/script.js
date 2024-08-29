@@ -69,17 +69,18 @@ function fetchSensorData() {
         .then(response => response.json())
         .then(data => {
             console.log('Respuesta del servidor:', data);
+
+            
+            // Actualiza el contenido de los elementos del DOM
+            document.getElementById('temperature').innerText = data.temperatura;
+            document.getElementById('humidity').innerText = data.humedad;
     })
     .catch((error) => {
         console.error('Error:', error);
     });
 
-    // Actualiza el contenido de los elementos del DOM
-    document.getElementById('temperature').innerText = data.temperatura;
-    document.getElementById('humidity').innerText = data.humedad;
 }
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
-window.onload = fetchESPList;
-window.onload = dummy_fetchSensorData;
-setInterval(fetchSensorData, 5000);
+window.onload = fetchESPList();
+setInterval(fetchSensorData(), 5000);
