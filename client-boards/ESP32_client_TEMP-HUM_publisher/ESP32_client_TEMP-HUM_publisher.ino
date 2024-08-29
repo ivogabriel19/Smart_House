@@ -6,11 +6,11 @@ const char* ssid = "raspi";
 const char* password = "raspiraspi";
 const char* serverName = "http://192.168.1.116:5000";  // Dirección IP del servidor
 
-String device_id = "ESP32_001";  // Identificador único para cada ESP32
+String device_id = "ESP32_003";  // Identificador único para cada ESP32
 //int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
 
 #define DHTPIN 15     // Digital pin connected to the DHT sensor
-#define DHTTYPE DHT11   // DHT 22  (AM2302)
+#define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT sensor_DHT(DHTPIN, DHTTYPE);
 
@@ -57,12 +57,12 @@ void loop() {
 
 void postTempHum(){ 
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)
-    float h = dht.readHumidity();
+    float h = sensor_DHT.readHumidity();
   // Read temperature as Celsius (the default)
-    float t = dht.readTemperature();
+    float t = sensor_DHT.readTemperature();
 
     // Check if any reads failed and exit early (to try again).
-    if (isnan(h) || isnan(t) || isnan(f)) {
+    if (isnan(h) || isnan(t)) {
         Serial.println(F("Failed to read from DHT sensor!"));
         return;
     }
@@ -73,7 +73,7 @@ void postTempHum(){
         request.addHeader("Content-Type", "application/json"); // Añade el tipo de contenido a la solicitud
 
         // Datos que quieres enviar (JSON)
-        String postData = "{\"temperatura\":\""+ t +"\",\"humedad\": "+ h +"}";
+        String postData = "{\"temperatura\":\""+ String(t) +"\",\"humedad\": "+ String(h) +"}";
 
         int httpCode = request.POST(postData); // Realiza la solicitud POST
 
