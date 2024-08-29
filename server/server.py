@@ -55,5 +55,16 @@ def update_button():
     print(f"Estado del botón recibido: {button_state}")
     return jsonify({"message": "Estado del botón actualizado", "state": button_state})
 
+
+@app.route('/post-TyH', methods=['POST'])
+def update_TyH():
+    data = request.json  # Obtener los datos enviados desde el frontend
+    datoTemp = data.get('temperatura')
+    datoHum = data.get('humedad')
+    print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
+    return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
+
+
+
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
