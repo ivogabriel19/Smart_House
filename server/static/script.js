@@ -62,6 +62,23 @@ function dummy_fetchSensorData() {
     document.getElementById('humidity').innerText = sensorData.humedad;
 }
 
+// Función para simular la obtención de datos JSON desde el servidor
+function fetchSensorData() {
+    // Envía el estado del botón al servidor Flask
+    fetch('/get-TyH')
+        .then(response => response.json())
+        .then(data => {
+            console.log('Respuesta del servidor:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
+
+    // Actualiza el contenido de los elementos del DOM
+    //document.getElementById('temperature').innerText = sensorData.temperatura;
+    //document.getElementById('humidity').innerText = sensorData.humedad;
+}
+
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = fetchESPList;
 window.onload = dummy_fetchSensorData;
