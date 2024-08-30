@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+    <script defer src="script.js"></script>
+</head>
+<body>
+    <h1>Listado de ESP Conectados</h1>
+    <ul id="espList">
+    </ul>
+
+    <main class="container">
+        <div class="card1">
+            <p>Dummy esp</p>
+            <ul>
+                <li>IP: <span>...</span></li>
+                <li>MAC: <span>...</span></li>
+                <li>Status: <span>...</span></li>
+            </ul>
+        </div>
+    </main>
+<br>
+        <div class="card" id="esp-card">
+            <h2 id="esp-id">ESP32_001</h2>
+            <p><strong>IP:</strong> <span id="esp-ip">192.168.1.148</span></p>
+            <p><strong>Status:</strong> <span id="esp-status">Connected</span></p>
+            <p><strong>Actuator:</strong> <span id="esp-actuator">ON</span></p>
+            <p><strong>Value:</strong> <span id="esp-value">75</span></p>
+        </div>
+</body>
+</html>
