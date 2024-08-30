@@ -33,7 +33,7 @@ void setup() {
         request.begin(String(serverName) + "/register");
         request.addHeader("Content-Type", "application/json");
 
-        String postData = "{\"device_id\":\"" + device_id + "\"}";
+        String postData = "{\"device_id\":\"" + device_id + "\", \"MAC\":\"" + String(WiFi.macAddress()) + "\"}";
         int httpResponseCode = request.POST(postData);
 
         if (httpResponseCode > 0) {

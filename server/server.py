@@ -4,9 +4,17 @@ import requests
 app = Flask(__name__)
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
-esp32_devices = {}
+esp32_devices = {
+    
+        "Dummy_ESP": {
+            "ip": "0.0.0.1",
+            "MAC" : "00:00:00:00:00:01",
+            "status": "non-existent"
+        }
+    
+}
 
-# Variable global para almacenar el estado del botón
+# Variables globales para valores de sensores
 button_state = "OFF"
 
 temp = 0.0
@@ -28,17 +36,19 @@ def get_esp_list():
 def register_device():
     data = request.json
     device_id = data.get('device_id')
+    device_mac = data.get('MAC')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     if device_id:
         esp32_devices[device_id] = {
             "ip": device_ip,
+            "MAC" : device_mac,
             "status": "connected"
         }
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
         return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
 
-# FIXME:
+# FIXME: la estructura de los datos en general, tanto aca como en los ESP
 @app.route('/send_command/<device_id>', methods=['POST'])
 def send_command(device_id):
     if device_id in esp32_devices:
