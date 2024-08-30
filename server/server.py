@@ -7,7 +7,7 @@ app = Flask(__name__)
 esp32_devices = {
     
         "Dummy_ESP": {
-            "ip": "0.0.0.1",
+            "IP": "0.0.0.1",
             "MAC" : "00:00:00:00:00:01",
             "status": "non-existent"
         }
@@ -40,7 +40,7 @@ def register_device():
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     if device_id:
         esp32_devices[device_id] = {
-            "ip": device_ip,
+            "IP": device_ip,
             "MAC" : device_mac,
             "status": "connected"
         }
