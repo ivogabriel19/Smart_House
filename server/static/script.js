@@ -104,7 +104,6 @@ function fetchSensorData() {
     fetch('/get-TyH')
         .then(response => response.json())
         .then(data => {
-            console.log('GET TyH c/5s:', data);
             // console.log('Temperatura:', data.temperatura);
             // console.log('Humedad:', data.humedad);
 
@@ -126,7 +125,7 @@ socket.on('connect', () => {
 
 // Evento para recibir mensajes del servidor
 socket.on('sensor_update', (data) => {
-    console.log('GET TyH c/5s:', data);
+    console.log('GET TyH c/sockets:', data);
             
     // Actualiza el contenido de los elementos del DOM
     document.getElementById('temperature').innerText = data.temperatura;
@@ -141,4 +140,4 @@ socket.on('disconnect', () => {
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = fetchESPList;
 
-setInterval(fetchSensorData, 300000);
+//setInterval(fetchSensorData, 300000);
