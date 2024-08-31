@@ -1,5 +1,8 @@
 let buttonState = "OFF";
 
+// Conectar al servidor Flask a través de WebSockets
+const socket = io();
+
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
@@ -116,12 +119,26 @@ function fetchSensorData() {
 
 }
 
+// Evento cuando el cliente se conecta
+socket.on('connect', () => {
+    console.log('Conectado al servidor');
+});
+
+// Evento para recibir mensajes del servidor
+socket.on('sensor_update', (data) => {
+    console.log('GET TyH c/5s:', data);
+            
+    // Actualiza el contenido de los elementos del DOM
+    document.getElementById('temperature').innerText = data.temperatura;
+    document.getElementById('humidity').innerText = data.humedad;
+});
+
+// Evento para manejar la desconexión
+socket.on('disconnect', () => {
+    console.log('Desconectado del servidor');
+});
+
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = fetchESPList;
-
-// document.addEventListener('DOMContentLoaded', function() {
-//     fetchESPList();
-// });
-
 
 setInterval(fetchSensorData, 300000);
