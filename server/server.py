@@ -76,6 +76,7 @@ def update_TyH():
     datoTemp = temp
     datoHum = hum
 
+    # FIXME: esto tiene que andar
     socketio.emit('sensor_update', data)
 
     print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
@@ -90,7 +91,7 @@ def send_TyH():
 # Evento para conexión
 @socketio.on('connect')
 def handle_connect():
-    print('Cliente conectado')
+    print('Cliente conectado mediante sockets')
     emit('connected', {'data': 'Conectado al servidor Flask'})
 
 # Evento para desconexión

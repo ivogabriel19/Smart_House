@@ -2,11 +2,6 @@ let buttonState = "OFF";
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
 
-// Evento cuando el cliente se conecta
-socket.on('connect', () => {
-    console.log('Conectado al servidor');
-});
-
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
@@ -76,6 +71,11 @@ function fetchSensorData() {
     });
 
 }
+
+// Evento cuando el cliente se conecta
+socket.on('connect', () => {
+    console.log('Conectado al servidor');
+});
 
 // Evento para recibir mensajes del servidor
 socket.on('sensor_update', (data) => {
