@@ -1,25 +1,58 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 20px;
     background-color: #f4f4f4;
+
+    height: 100vh;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    
+    h1{
+        margin-bottom: 10px;
+        color: #333;
+    }
 }
 
-h1 {
-    color: #333;
+section{
+    margin-bottom: 2em;
 }
 
-#espList {
-    margin-top: 20px;
-    padding: 0;
-    list-style: none;
+.cards-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
 }
 
-#espList li {
-    background-color: #fff;
-    margin-bottom: 10px;
-    padding: 15px;
-    border-radius: 5px;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+.card{
+    color: white;
+    background-color: dimgray;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .4);
+    padding: 2vw 2vw;
+    /* width: 150px; */
+    max-width: 40vw;
+    aspect-ratio: 16 / 9;
+    text-align: start;
+
+    p{
+        font-size: 1.5em;
+        font-weight: 600;
+        border-bottom: 2px solid white;
+        padding-bottom: 5px;
+    }
+
+    li{
+        margin: 10px 0;
+        list-style-type:none;
+    }
 }
 
 .sensor-container {

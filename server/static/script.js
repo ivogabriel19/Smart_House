@@ -5,22 +5,55 @@ function fetchESPList() {
         .then(response => response.json())
         .then(data => {
 
-            const espList = document.getElementById('espList');
-            espList.innerHTML = ''; // Limpiar la lista actual
+            const container = document.querySelector('.cards-container');
+            container.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
 
+            for (const espId in data) {
+                if (data.hasOwnProperty(espId)) {
+                    const espInfo = data[espId];
+        
+                    // Crea una tarjeta para cada ESP
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+        
+                    const idElement = document.createElement('p');
+                    idElement.innerText = espId;
+                    idElement.id = 'esp-id';
+                    
+                    const list = document.createElement('ul');
+                    
+                    const ipItem = document.createElement('li');
+                    ipItem.innerHTML = `<strong>IP:</strong> <span id="esp-ip">${espInfo.IP}</span>`;
+                    
+                    const macItem = document.createElement('li');
+                    macItem.innerHTML = `<strong>MAC:</strong> <span id="esp-mac">${espInfo.MAC}</span>`;
+                    
+                    const statusItem = document.createElement('li');
+                    statusItem.innerHTML = `<strong>Status:</strong> <span id="esp-status">${espInfo.status}</span>`;
+                    
+                    list.appendChild(ipItem);
+                    list.appendChild(macItem);
+                    list.appendChild(statusItem);
+                    
+                    card.appendChild(idElement);
+                    card.appendChild(list);
+                    
+                    // Añade la tarjeta al contenedor
+                    container.appendChild(card);
+                }
+            }
             // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
-            Object.keys(data).forEach(key => {
-                const details = data[key];
-                console.log(`Device: ${key}`);
-                console.log(`IP: ${details.ip}`);
-                console.log(`Status: ${details.status}`);
-                console.log('-------------');
+            // Object.keys(data).forEach(key => {
+            //     const details = data[key];
+            //     console.log(`Device: ${key}`);
+            //     console.log(`IP: ${details.ip}`);
+            //     console.log(`Status: ${details.status}`);
+            //     console.log('-------------');
                 
-                const li = document.createElement('li');
-                li.textContent = `ESP ID: ${key} || IP: ${details.ip}, Status: ${details.status}`;
-                espList.appendChild(li);
-            });
-            
+            //     const li = document.createElement('li');
+            //     li.textContent = `ESP ID: ${key} || IP: ${details.ip}, Status: ${details.status}`;
+            //     espList.appendChild(li);
+            // });
         })
         .catch(error => {
             console.error('Error fetching ESP list:', error);
@@ -85,4 +118,10 @@ function fetchSensorData() {
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = fetchESPList;
-setInterval(fetchSensorData, 60000);
+
+// document.addEventListener('DOMContentLoaded', function() {
+//     fetchESPList();
+// });
+
+
+setInterval(fetchSensorData, 300000);

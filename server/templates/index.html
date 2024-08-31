@@ -8,21 +8,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <h1>Listado de ESP Conectados</h1>
-    <ul id="espList">
-        <!-- Aquí se cargará el listado de ESP -->
-    </ul>
+    <section class="esp-list">
+        <h1>Listado de ESP Conectados</h1>
+        <div class="cards-container" id="cards-container">
 
-    <div class="sensor-container">
+        </div>
+    </section>
+    
+    <section class="sensor-container">
         <h1>Datos del Sensor</h1>
         <div class="sensor-data">
             <p>Temperatura: <span id="temperature">Cargando...</span></p>
             <p>Humedad: <span id="humidity">Cargando...</span></p>
         </div>
-    </div>
+    </section>
 
-    <h1>Control de Botón ON-OFF</h1>
-    <button id="toggleButton" onclick="toggleButtonState()">OFF</button>
+    <section class="ON-OFF_button">
+        <h1>Control de Botón ON-OFF</h1>
+        <button id="toggleButton" onclick="toggleButtonState()">OFF</button>
+    </section>
 
     
     <script src="{{ url_for('static', filename='script.js') }}"></script>
