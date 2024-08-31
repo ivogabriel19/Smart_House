@@ -46,6 +46,17 @@ def register_device():
             "MAC" : device_mac,
             "status": "connected"
         }
+
+        esp = {}
+        esp[device_id] = {
+            "IP": device_ip,
+            "MAC" : device_mac,
+            "status": "connected"
+        }
+
+        # envia al front los datos recien recibidos
+        socketio.emit('add_ESP_to_List', esp)
+
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
         return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
