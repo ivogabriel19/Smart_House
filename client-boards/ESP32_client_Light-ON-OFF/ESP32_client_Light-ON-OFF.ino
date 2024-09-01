@@ -9,7 +9,7 @@ const char* password = "0descensos";
 const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_002";  // Identificador único para cada ESP32
-String esp_type = "Dummy";  // Identificador del tipo de tarea del ESP32
+String esp_type = "Actuador";  // Identificador del tipo de tarea del ESP32
 int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
 
 WebServer server(80);
