@@ -83,8 +83,17 @@ def update_button():
     global button_state
     data = request.json  # Obtener los datos enviados desde el frontend
     button_state = data.get('state', 'OFF')  # Obtener el estado del botón
+    esp_ip = data.get('destination_ip')
     print(f"Estado del botón recibido: {button_state}")
-    return jsonify({"message": "Estado del botón actualizado", "state": button_state})
+        # Enviar el estado del botón al ESP32
+    if button_state:
+        try:
+            response = requests.post(f"{esp_ip}/actuator", json={'state': button_state})
+            return jsonify({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+        except requests.exceptions.RequestException as e:
+            return jsonify({'status': 'error', 'message': str(e)})
+    
+    return jsonify({'status': 'error', 'message': 'Invalid state received'})
 
 #ruta que recibe los valores de temperatura y humedad de un ESP
 @app.route('/post-TyH', methods=['POST'])

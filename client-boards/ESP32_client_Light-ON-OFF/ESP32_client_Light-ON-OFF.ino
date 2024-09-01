@@ -1,5 +1,7 @@
 #include <WiFi.h>
-#include <HTTPClient.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+#include <ArduinoJson.h>
 
 const char* ssid = "nombre_de_tu_red";
 const char* password = "contraseña_de_tu_red";
@@ -8,6 +10,34 @@ const char* serverName = "http://192.168.1.100:5000";  // Dirección IP del serv
 String device_id = "ESP32_00x";  // Identificador único para cada ESP32
 String esp_type = "Dummy";  // Identificador del tipo de tarea del ESP32
 int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
+
+WebServer server(80);
+
+// Función para manejar la solicitud POST y controlar el actuador
+void handleActuator() {
+    if (server.hasArg("plain")) {
+        String body = server.arg("plain");
+        StaticJsonDocument<200> jsonDoc;
+        deserializeJson(jsonDoc, body);
+
+        const char* state = jsonDoc["state"];
+        Serial.print("Received state: ");
+        Serial.println(state);
+
+        // Control del actuador basado en el estado recibido
+        if (strcmp(state, "ON") == 0) {
+        // Activar el actuador
+        digitalWrite(5, HIGH); // Suponiendo que el actuador está conectado al pin 5
+        } else if (strcmp(state, "OFF") == 0) {
+        // Desactivar el actuador
+        digitalWrite(5, LOW);
+        }
+        
+        server.send(200, "application/json", "{\"status\":\"success\"}");
+    } else {
+        server.send(400, "application/json", "{\"status\":\"error\",\"message\":\"Invalid request\"}");
+    }
+}
 
 void setup() {
     Serial.begin(115200);
@@ -41,27 +71,11 @@ void setup() {
         }
         http.end();
     }
+
+    server.on("/actuator", HTTP_POST, handleActuator);
+    server.begin();
 }
 
 void loop() {
-  // Aquí se verifica si hay una nueva petición del servidor
-    HTTPClient http;
-    http.begin(serverName + "/send_command/" + device_id);
-    int httpResponseCode = http.GET();
-
-    if (httpResponseCode > 0) {
-        String payload = http.getString();
-        Serial.println(payload);
-
-        // Aquí se procesa el valor recibido para el actuador
-        int value = payload.toInt();
-        digitalWrite(actuatorPin, value);
-    } else {
-        Serial.print("Error en la conexión: ");
-        Serial.println(httpResponseCode);
-    }
-    
-    http.end();
-
-    delay(5000);  // Espera antes de verificar nuevamente
+    server.handleClient();
 }

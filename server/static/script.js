@@ -66,6 +66,7 @@ function fetchESPList() {
 function toggleButtonState() {
     // Cambia el estado del botón
     buttonState = buttonState === "OFF" ? "ON" : "OFF";
+    esp_ip = document.getElementById('ip_destino').value;
     document.getElementById('toggleButton').innerText = buttonState;
 
     // Envía el estado del botón al servidor Flask
@@ -74,7 +75,9 @@ function toggleButtonState() {
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ state: buttonState }),
+        body: JSON.stringify({  state: buttonState , 
+                                destination_ip: esp_ip
+                            }),
     })
     .then(response => response.json())
     .then(data => {
