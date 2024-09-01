@@ -14,6 +14,7 @@ function fetchESPList() {
             for (const espId in data) {
                 if (data.hasOwnProperty(espId)) {
                     const espInfo = data[espId];
+                    console.log(data[espId]);
         
                     // Crea una tarjeta para cada ESP
                     const card = document.createElement('div');
@@ -34,9 +35,13 @@ function fetchESPList() {
                     const statusItem = document.createElement('li');
                     statusItem.innerHTML = `<strong>Status:</strong> <span id="esp-status">${espInfo.status}</span>`;
                     
+                    const typeItem = document.createElement('li');
+                    typeItem.innerHTML = `<strong>Type:</strong> <span id="esp-type">${espInfo.type}</span>`;
+                    
                     list.appendChild(ipItem);
                     list.appendChild(macItem);
                     list.appendChild(statusItem);
+                    list.appendChild(typeItem);
                     
                     card.appendChild(idElement);
                     card.appendChild(list);
@@ -171,9 +176,14 @@ socket.on('add_ESP_to_List', data => {
             const statusItem = document.createElement('li');
             statusItem.innerHTML = `<strong>Status:</strong> <span id="esp-status">${espInfo.status}</span>`;
             
+            const typeItem = document.createElement('li');
+            typeItem.innerHTML = `<strong>Type:</strong> <span id="esp-type">${espInfo.type}</span>`;
+            
+
             list.appendChild(ipItem);
             list.appendChild(macItem);
             list.appendChild(statusItem);
+            list.appendChild(typeItem);
             
             card.appendChild(idElement);
             card.appendChild(list);

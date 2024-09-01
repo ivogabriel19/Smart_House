@@ -11,7 +11,8 @@ esp32_devices = {
         "Dummy_ESP": {
             "IP": "0.0.0.1",
             "MAC" : "00:00:00:00:00:01",
-            "status": "non-existent"
+            "status": "non-existent",
+            "type": "fictional"
         }
     
 }
@@ -39,19 +40,22 @@ def register_device():
     data = request.json
     device_id = data.get('device_id')
     device_mac = data.get('MAC')
+    device_type = data.get('type')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     if device_id:
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected"
+            "status": "connected",
+            "type": device_type
         }
 
         esp = {}
         esp[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected"
+            "status": "connected",
+            "type": device_type
         }
 
         # envia al front los datos recien recibidos
