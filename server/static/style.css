@@ -85,3 +85,46 @@ header{
     font-weight: bold;
     color: #333;
 }
+
+.ON-OFF_button {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* width: 400px; */
+}
+
+.ON-OFF_button h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.ON-OFF_button input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.ON-OFF_button button {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ON-OFF_button button:hover {
+    background-color: #333;
+}
+
+.ON-OFF_button button:active {
+    background-color: #333;
+}
