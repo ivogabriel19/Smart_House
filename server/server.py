@@ -88,7 +88,7 @@ def update_button():
         # Enviar el estado del botón al ESP32
     if button_state:
         try:
-            response = requests.post(f"{esp_ip}/actuator", json={'state': button_state})
+            response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
             return jsonify({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
         except requests.exceptions.RequestException as e:
             return jsonify({'status': 'error', 'message': str(e)})

@@ -2,12 +2,13 @@
 #include <WiFiClient.h>
 #include <WebServer.h>
 #include <ArduinoJson.h>
+#include <HTTPClient.h>
 
-const char* ssid = "nombre_de_tu_red";
-const char* password = "contraseña_de_tu_red";
-const char* serverName = "http://192.168.1.100:5000";  // Dirección IP del servidor
+const char* ssid = "Dejen dormir";
+const char* password = "0descensos";
+const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servidor
 
-String device_id = "ESP32_00x";  // Identificador único para cada ESP32
+String device_id = "ESP32_002";  // Identificador único para cada ESP32
 String esp_type = "Dummy";  // Identificador del tipo de tarea del ESP32
 int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
 
@@ -27,10 +28,10 @@ void handleActuator() {
         // Control del actuador basado en el estado recibido
         if (strcmp(state, "ON") == 0) {
         // Activar el actuador
-        digitalWrite(5, HIGH); // Suponiendo que el actuador está conectado al pin 5
+        digitalWrite(actuatorPin, HIGH); // Suponiendo que el actuador está conectado al pin 5
         } else if (strcmp(state, "OFF") == 0) {
         // Desactivar el actuador
-        digitalWrite(5, LOW);
+        digitalWrite(actuatorPin, LOW);
         }
         
         server.send(200, "application/json", "{\"status\":\"success\"}");
@@ -53,12 +54,10 @@ void setup() {
     // Registro en el servidor
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
-        http.begin(serverName + "/register");
+        http.begin(String(serverName) + "/register");
         http.addHeader("Content-Type", "application/json");
 
-        String postData = "{\"device_id\":\"" + device_id + "\", 
-                            \"MAC\":\"" + String(WiFi.macAddress()) + "\", 
-                            \"type\":\"" + esp_type + "\"}";
+        String postData = "{\"device_id\":\"" + device_id + "\", \"MAC\":\"" + String(WiFi.macAddress()) + "\", \"type\":\"" + esp_type + "\"}";
         int httpResponseCode = http.POST(postData);
 
         if (httpResponseCode > 0) {
