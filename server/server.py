@@ -1,6 +1,8 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 from flask_socketio import SocketIO, send, emit
+import time
+from threading import Thread
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -17,6 +19,12 @@ esp32_devices = {
     
 }
 
+# Diccionario para almacenar la última vez que se recibió un heartbeat de cada ESP32
+esp_status = {}
+
+# Intervalo de verificación en segundos (10 minutos)
+CHECK_INTERVAL = 600
+
 # Variables globales para valores de sensores
 button_state = "OFF"
 
@@ -26,13 +34,6 @@ hum = 0.0
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
-
-#ruta para devolver el listado harcodeado de ESPs
-@app.route('/api/esp/list', methods=['GET'])
-def get_esp_list():
-    print("ESP registrados: ")
-    print(esp32_devices)
-    return jsonify(esp32_devices)
 
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
@@ -64,6 +65,22 @@ def register_device():
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
         return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
+
+#ruta para devolver el listado harcodeado de ESPs
+@app.route('/api/esp/list', methods=['GET'])
+def get_esp_list():
+    print("ESP registrados: ")
+    print(esp32_devices)
+    return jsonify(esp32_devices)
+
+#ruta para recibir los "heartbeats"
+@app.route('/heartbeat', methods=['POST'])
+def heartbeat():
+    data = request.json
+    esp_id = data.get('id')
+    esp_status[esp_id] = time.time()
+    print("Heartbeat recibido desde " + esp_id)
+    return jsonify({"message": "Heartbeat recibido", "status": "OK"})
 
 # FIXME: la estructura de los datos en general, tanto aca como en los ESP
 @app.route('/send_command/<device_id>', methods=['POST'])
@@ -132,6 +149,21 @@ def handle_connect():
 @socketio.on('disconnect')
 def handle_disconnect():
     print('Cliente desconectado')
+
+#funcion que checkea la conectividad de los ESP
+def check_esp_status():
+    while True:
+        current_time = time.time()
+        for esp_id, last_heartbeat in esp_status.items():
+            if current_time - last_heartbeat > CHECK_INTERVAL:
+                # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
+                print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+                # Aquí puedes usar requests para enviar un GET al ESP32
+                # response = requests.get(f"http://{esp_ip}/check-status")
+        time.sleep(CHECK_INTERVAL)
+
+# Ejecutar la verificación de ESP32 en un hilo separado
+Thread(target=check_esp_status).start()
 
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
