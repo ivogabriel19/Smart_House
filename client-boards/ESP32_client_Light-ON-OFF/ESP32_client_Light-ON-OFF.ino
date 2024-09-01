@@ -6,6 +6,7 @@ const char* password = "contraseña_de_tu_red";
 const char* serverName = "http://192.168.1.100:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_00x";  // Identificador único para cada ESP32
+String esp_type = "Dummy";  // Identificador del tipo de tarea del ESP32
 int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
 
 void setup() {
@@ -25,7 +26,9 @@ void setup() {
         http.begin(serverName + "/register");
         http.addHeader("Content-Type", "application/json");
 
-        String postData = "{\"device_id\":\"" + device_id + "\"}";
+        String postData = "{\"device_id\":\"" + device_id + "\", 
+                            \"MAC\":\"" + String(WiFi.macAddress()) + "\", 
+                            \"type\":\"" + esp_type + "\"}";
         int httpResponseCode = http.POST(postData);
 
         if (httpResponseCode > 0) {

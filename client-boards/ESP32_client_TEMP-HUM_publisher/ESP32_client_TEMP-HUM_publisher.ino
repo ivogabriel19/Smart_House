@@ -7,7 +7,7 @@ const char* password = "raspiraspi";
 const char* serverName = "http://192.168.1.116:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_003";  // Identificador único para cada ESP32
-//int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
+String esp_type = "Sensor";  // Identificador del tipo de tarea del ESP32
 
 #define DHTPIN 15     // Digital pin connected to the DHT sensor
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
@@ -32,8 +32,10 @@ void setup() {
         HTTPClient request;
         request.begin(String(serverName) + "/register");
         request.addHeader("Content-Type", "application/json");
-
-        String postData = "{\"device_id\":\"" + device_id + "\", \"MAC\":\"" + String(WiFi.macAddress()) + "\"}";
+        
+        String postData = "{\"device_id\":\"" + device_id + "\", 
+                            \"MAC\":\"" + String(WiFi.macAddress()) + "\", 
+                            \"type\":\"" + esp_type + "\"}";
         int httpResponseCode = request.POST(postData);
 
         if (httpResponseCode > 0) {
