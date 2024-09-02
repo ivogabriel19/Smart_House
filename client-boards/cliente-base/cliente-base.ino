@@ -1,5 +1,11 @@
 #include <WiFi.h>
+#include <WiFiClient.h>
+#include <WebServer.h>
+//#include <ArduinoJson.h>
 #include <HTTPClient.h>
+
+//#define HEARTBEAT_FRECUENCY 300000 // 300.000ms = 5min
+#define HEARTBEAT_FRECUENCY 120000 // 120.000ms = 2min
 
 const char* ssid = "Dejen dormir";
 const char* password = "0descensos";
@@ -7,6 +13,12 @@ const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servi
 
 String device_id = "ESP32_001";  // Identificador único para cada ESP32
 String esp_type = "Basico";  // Identificador del tipo de tarea del ESP32
+
+WebServer server(80);
+
+void handleStatus() {
+    server.send(200, "text/plain", "ESP32 OK");
+}
 
 void setup() {
     Serial.begin(115200);
@@ -18,13 +30,23 @@ void setup() {
     }
     Serial.println("Conectado a la red WiFi");
 
+    server.on("/status", handleStatus);
+    server.begin();
+
     register_in_server();
     send_heartbeat();
 }
 
 void loop() {
-    send_heartbeat();
-    delay(5000);  // Espera antes de verificar nuevamente
+
+    static unsigned long marca = 0;
+
+    server.handleClient();
+
+    if (millis() - marca > HEARTBEAT_FRECUENCY){
+        marca = millis();
+        send_heartbeat();
+    }
 }
 
 void register_in_server(){

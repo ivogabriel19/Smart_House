@@ -16,14 +16,16 @@ esp32_devices = {
             "status": "non-existent",
             "type": "fictional"
         }
-    
 }
 
 # Diccionario para almacenar la última vez que se recibió un heartbeat de cada ESP32
-esp_status = {}
+#esp_status = {}
 
 # Intervalo de verificación en segundos (10 minutos)
-CHECK_INTERVAL = 600
+#CHECK_INTERVAL = 600 #10 minutos
+CHECK_INTERVAL = 60 #1 minuto
+# Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
+VERIFICATION_TIMEOUT = 10  
 
 # Variables globales para valores de sensores
 button_state = "OFF"
@@ -47,7 +49,8 @@ def register_device():
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected",
+            "status": "Online",
+            "last_seen": time.time(),
             "type": device_type
         }
 
@@ -55,7 +58,8 @@ def register_device():
         esp[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected",
+            "status": "Online",
+            "last_seen": time.time(),
             "type": device_type
         }
 
@@ -78,9 +82,13 @@ def get_esp_list():
 def heartbeat():
     data = request.json
     esp_id = data.get('id')
-    esp_status[esp_id] = time.time()
-    print("Heartbeat recibido desde " + esp_id)
-    return jsonify({"message": "Heartbeat recibido", "status": "OK"})
+    if esp_id in esp32_devices.keys():
+        esp32_devices[esp_id]["last_seen"] = time.time()
+        print("Heartbeat recibido desde " + esp_id)
+        return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
+    else:
+        print("Heartbeat no corresponde a un dispositivo registrado")
+        return jsonify({"message": "Heartbeat recibido", "status": "Failed"}), 400
 
 # FIXME: la estructura de los datos en general, tanto aca como en los ESP
 @app.route('/send_command/<device_id>', methods=['POST'])
@@ -154,17 +162,37 @@ def handle_disconnect():
 def check_esp_status():
     while True:
         current_time = time.time()
-        for esp_id, last_heartbeat in esp_status.items():
-            if current_time - last_heartbeat > CHECK_INTERVAL:
-                # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
+        print("Checking...")
+        for esp_id in esp32_devices.keys():
+            if current_time - esp32_devices[esp_id]["last_seen"] > CHECK_INTERVAL:
+                esp32_devices[esp_id]["status"] = "Verificando"
+                verify_esp(esp_id )
                 print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+                # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
                 # Aquí puedes usar requests para enviar un GET al ESP32
                 # response = requests.get(f"http://{esp_ip}/check-status")
         time.sleep(CHECK_INTERVAL)
 
+#funcion que envia una solicitud get para checkear conectividad
+def verify_esp(esp_id):
+    try:
+        response = requests.get(f"http://{esp32_devices[esp_id]['ip_address']}/status", timeout=VERIFICATION_TIMEOUT)
+        if response.status_code == 200:
+            esp32_devices[esp_id]['status'] = 'Online'
+            esp32_devices[esp_id]['last_seen'] = time.time()  # Actualizar el tiempo de la última respuesta
+            print(f"{esp_id} está en línea después de la verificación.")
+        else:
+            esp32_devices[esp_id]['status'] = 'Offline'
+    except requests.exceptions.RequestException:
+        esp32_devices[esp_id]['status'] = 'Offline'
+        print(f"{esp_id} está desconectado después de la verificación.")
+
 # Ejecutar la verificación de ESP32 en un hilo separado
-Thread(target=check_esp_status).start()
+#Thread(target=check_esp_status).start()
 
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
+    status_thread = Thread(target=check_esp_status) # Ejecutar la verificación de ESP32 en un hilo separado
+    status_thread.daemon = True
+    status_thread.start()
     socketio.run(app, host='0.0.0.0', port=5000, debug=False)
