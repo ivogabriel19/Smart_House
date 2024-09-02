@@ -42,7 +42,7 @@ def register_device():
     device_mac = data.get('MAC')
     device_type = data.get('type')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
-    if device_id:
+    if device_id not in esp32_devices:
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
@@ -57,13 +57,12 @@ def register_device():
             "status": "connected",
             "type": device_type
         }
-
         # envia al front los datos recien recibidos
         socketio.emit('add_ESP_to_List', esp)
-
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
-        return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
+        print("Dispositivo ya registrado")
+        return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
 
 # FIXME: la estructura de los datos en general, tanto aca como en los ESP
 @app.route('/send_command/<device_id>', methods=['POST'])
