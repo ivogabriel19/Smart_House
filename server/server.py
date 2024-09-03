@@ -2,7 +2,8 @@ from flask import Flask, request, jsonify, render_template
 import requests
 from flask_socketio import SocketIO, send, emit
 import time
-from threading import Thread
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -160,13 +161,14 @@ def handle_disconnect():
 
 #funcion que checkea la conectividad de los ESP
 def check_esp_status():
+    global esp32_devices
     while True:
         current_time = time.time()
         print("Checking...")
         for esp_id in esp32_devices.keys():
             if current_time - esp32_devices[esp_id]["last_seen"] > CHECK_INTERVAL:
                 esp32_devices[esp_id]["status"] = "Verificando"
-                verify_esp(esp_id )
+                #verify_esp(esp_id )
                 print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
                 # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
                 # Aquí puedes usar requests para enviar un GET al ESP32
@@ -192,7 +194,15 @@ def verify_esp(esp_id):
 
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
-    status_thread = Thread(target=check_esp_status) # Ejecutar la verificación de ESP32 en un hilo separado
-    status_thread.daemon = True
-    status_thread.start()
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+#    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    scheduler = BackgroundScheduler()
+    # Programa la tarea para ejecutarse cada 10 minutos
+    scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
+    scheduler.start()
+
+    try:
+        # Iniciar la aplicación Flask
+        socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    except (KeyboardInterrupt, SystemExit):
+        # Apagar el cron job si la aplicación es cerrada
+        scheduler.shutdown()
