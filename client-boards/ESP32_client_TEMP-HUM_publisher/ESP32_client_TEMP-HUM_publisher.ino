@@ -2,9 +2,9 @@
 #include <HTTPClient.h>
 #include "DHT.h"
 
-const char* ssid = "raspi";
-const char* password = "raspiraspi";
-const char* serverName = "http://192.168.1.116:5000";  // Dirección IP del servidor
+const char* ssid = "Dejen dormir";
+const char* password = "0descensos";
+const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_003";  // Identificador único para cada ESP32
 String esp_type = "Sensor";  // Identificador del tipo de tarea del ESP32
@@ -27,35 +27,35 @@ void setup() {
     }
     Serial.println("Conectado a la red WiFi");
 
+    register_in_server();
+}
+
+void loop() {
+    postTempHum();
+    delay(300000);  // Espera 5min antes de publicar nuevamente
+}
+
+void register_in_server(){
     // Registro en el servidor
     if (WiFi.status() == WL_CONNECTED) {
-        HTTPClient request;
-        request.begin(String(serverName) + "/register");
-        request.addHeader("Content-Type", "application/json");
-        
-        String postData = "{\"device_id\":\"" + device_id + "\", 
-                            \"MAC\":\"" + String(WiFi.macAddress()) + "\", 
-                            \"type\":\"" + esp_type + "\"}";
-        int httpResponseCode = request.POST(postData);
+        HTTPClient http;
+        http.begin(String(serverName) + "/register");
+        http.addHeader("Content-Type", "application/json");
+
+        String postData = "{\"device_id\":\"" + device_id + "\", \"MAC\":\"" + String(WiFi.macAddress()) + "\", \"type\":\"" + esp_type + "\"}";
+        int httpResponseCode = http.POST(postData);
 
         if (httpResponseCode > 0) {
-        String response = request.getString();
+        String response = http.getString();
         Serial.println(httpResponseCode);
         Serial.println(response);
         } else {
         Serial.print("Error en la conexión: ");
         Serial.println(httpResponseCode);
         }
-        request.end();
+        http.end();
     }
 }
-
-void loop() {
-    postTempHum();
-    delay(5000);  // Espera antes de verificar nuevamente
-}
-
-
 
 void postTempHum(){ 
   // Sensor readings may also be up to 2 seconds 'old' (its a very slow sensor)

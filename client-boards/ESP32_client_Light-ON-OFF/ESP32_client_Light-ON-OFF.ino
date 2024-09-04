@@ -51,6 +51,16 @@ void setup() {
     }
     Serial.println("Conectado a la red WiFi");
 
+    register_in_server();
+
+    server.on("/actuator", HTTP_POST, handleActuator);
+    server.begin();
+}
+
+void loop() {
+    server.handleClient();
+}
+void register_in_server(){
     // Registro en el servidor
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
@@ -70,11 +80,4 @@ void setup() {
         }
         http.end();
     }
-
-    server.on("/actuator", HTTP_POST, handleActuator);
-    server.begin();
-}
-
-void loop() {
-    server.handleClient();
 }

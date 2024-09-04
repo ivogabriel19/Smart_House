@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 import requests
 from flask_socketio import SocketIO, send, emit
+import time
+from apscheduler.schedulers.background import BackgroundScheduler
+
 
 app = Flask(__name__)
 socketio = SocketIO(app)
@@ -12,10 +15,18 @@ esp32_devices = {
             "IP": "0.0.0.1",
             "MAC" : "00:00:00:00:00:01",
             "status": "non-existent",
-            "type": "fictional"
+            "type": "fictional",
+            "last_seen" : time.time()
         }
-    
 }
+
+# Diccionario para almacenar la última vez que se recibió un heartbeat de cada ESP32
+#esp_status = {}
+
+# Intervalo de verificación en segundos (10 minutos)
+CHECK_INTERVAL = 600 #10 minutos
+# Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
+VERIFICATION_TIMEOUT = 10  
 
 # Variables globales para valores de sensores
 button_state = "OFF"
@@ -26,13 +37,6 @@ hum = 0.0
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
-
-#ruta para devolver el listado harcodeado de ESPs
-@app.route('/api/esp/list', methods=['GET'])
-def get_esp_list():
-    print("ESP registrados: ")
-    print(esp32_devices)
-    return jsonify(esp32_devices)
 
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
@@ -46,7 +50,8 @@ def register_device():
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected",
+            "status": "Online",
+            "last_seen": time.time(),
             "type": device_type
         }
 
@@ -54,7 +59,8 @@ def register_device():
         esp[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
-            "status": "connected",
+            "status": "Online",
+            "last_seen": time.time(),
             "type": device_type
         }
         # envia al front los datos recien recibidos
@@ -63,6 +69,27 @@ def register_device():
     else:
         print("Dispositivo ya registrado")
         return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
+
+#ruta para devolver el listado harcodeado de ESPs
+@app.route('/api/esp/list', methods=['GET'])
+def get_esp_list():
+    print("ESP registrados: ")
+    print(esp32_devices)
+    return jsonify(esp32_devices)
+
+#ruta para recibir los "heartbeats"
+@app.route('/heartbeat', methods=['POST'])
+def heartbeat():
+    data = request.json
+    esp_id = data.get('id')
+    if esp_id in esp32_devices.keys():
+        esp32_devices[esp_id]["last_seen"] = time.time()
+        esp32_devices[esp_id]["status"] = "Online"
+        print("Heartbeat recibido desde " + esp_id)
+        return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
+    else:
+        print("Heartbeat no corresponde a un dispositivo registrado")
+        return jsonify({"message": "Heartbeat recibido", "status": "Failed"}), 400
 
 # FIXME: la estructura de los datos en general, tanto aca como en los ESP
 @app.route('/send_command/<device_id>', methods=['POST'])
@@ -132,6 +159,46 @@ def handle_connect():
 def handle_disconnect():
     print('Cliente desconectado')
 
+#funcion que checkea la conectividad de los ESP
+def check_esp_status():
+    global esp32_devices
+    print("Verificando estado de todos los ESP...")
+    for esp_id, esp_info in esp32_devices.items():
+        time_diff = time.time() - esp_info['last_seen']
+        if time_diff > CHECK_INTERVAL:
+            esp32_devices[esp_id]['status'] = 'Verificando'
+            verify_esp(esp_id, esp_info)
+            print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+    print("Verificacion terminada!")
+
+
+#funcion que envia una solicitud get para checkear conectividad
+def verify_esp(esp_id, esp_info):
+    try:
+        response = requests.get(f"http://{esp_info['IP']}/status", timeout=VERIFICATION_TIMEOUT)
+        if response.status_code == 200:
+            esp32_devices[esp_id]['status'] = 'Online'
+            esp32_devices[esp_id]['last_seen'] = time.time()  # Actualizar el tiempo de la última respuesta
+            print(f"{esp_id} está en línea después de la verificación.")
+        else:
+            esp32_devices[esp_id]['status'] = 'Offline'
+    except requests.exceptions.RequestException:
+        esp32_devices[esp_id]['status'] = 'Offline'
+        print(f"{esp_id} está desconectado después de la verificación.")
+
+
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
-    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+#    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    esp32_devices["Dummy_ESP"]["last_seen"] = time.time()
+    scheduler = BackgroundScheduler()
+    # Programa la tarea para ejecutarse cada 10 minutos
+    scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
+    scheduler.start()
+
+    try:
+        # Iniciar la aplicación Flask
+        socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    except (KeyboardInterrupt, SystemExit):
+        # Apagar el cron job si la aplicación es cerrada
+        scheduler.shutdown()
