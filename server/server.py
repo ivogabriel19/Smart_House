@@ -46,7 +46,7 @@ def register_device():
     device_mac = data.get('MAC')
     device_type = data.get('type')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
-    if device_id:
+    if device_id not in esp32_devices:
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
@@ -69,7 +69,8 @@ def register_device():
 
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
-        return jsonify({"status": "error", "message": "ID de dispositivo faltante"}), 400
+        print("Dispositivo ya registrado")
+        return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
 
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
