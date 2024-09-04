@@ -15,7 +15,8 @@ esp32_devices = {
             "IP": "0.0.0.1",
             "MAC" : "00:00:00:00:00:01",
             "status": "non-existent",
-            "type": "fictional"
+            "type": "fictional",
+            "last_seen" : time.time()
         }
 }
 
@@ -85,6 +86,7 @@ def heartbeat():
     esp_id = data.get('id')
     if esp_id in esp32_devices.keys():
         esp32_devices[esp_id]["last_seen"] = time.time()
+        esp32_devices[esp_id]["status"] = "Online"
         print("Heartbeat recibido desde " + esp_id)
         return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
     else:
@@ -163,22 +165,24 @@ def handle_disconnect():
 def check_esp_status():
     global esp32_devices
     while True:
-        current_time = time.time()
-        print("Checking...")
-        for esp_id in esp32_devices.keys():
-            if current_time - esp32_devices[esp_id]["last_seen"] > CHECK_INTERVAL:
-                esp32_devices[esp_id]["status"] = "Verificando"
-                #verify_esp(esp_id )
+        print("Verificando estado de todos los ESP...")
+        for esp_id, esp_info in esp32_devices.items():
+            time_diff = time.time() - esp_info['last_seen']
+            if time_diff > CHECK_INTERVAL:
+                esp32_devices[esp_id]['status'] = 'Verificando'
+                verify_esp(esp_id, esp_info)
                 print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
                 # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
                 # Aquí puedes usar requests para enviar un GET al ESP32
                 # response = requests.get(f"http://{esp_ip}/check-status")
-        time.sleep(CHECK_INTERVAL)
+
 
 #funcion que envia una solicitud get para checkear conectividad
-def verify_esp(esp_id):
+#FIXME: bucle infinito cuando falla el dummy
+#TODO: ahi le asigne tiempo al dummy no se si arregla el bug eso
+def verify_esp(esp_id, esp_info):
     try:
-        response = requests.get(f"http://{esp32_devices[esp_id]['ip_address']}/status", timeout=VERIFICATION_TIMEOUT)
+        response = requests.get(f"http://{esp_info['IP']}/status", timeout=VERIFICATION_TIMEOUT)
         if response.status_code == 200:
             esp32_devices[esp_id]['status'] = 'Online'
             esp32_devices[esp_id]['last_seen'] = time.time()  # Actualizar el tiempo de la última respuesta
@@ -189,12 +193,11 @@ def verify_esp(esp_id):
         esp32_devices[esp_id]['status'] = 'Offline'
         print(f"{esp_id} está desconectado después de la verificación.")
 
-# Ejecutar la verificación de ESP32 en un hilo separado
-#Thread(target=check_esp_status).start()
 
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
 #    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    esp32_devices["Dummy_ESP"]["last_seen"] = time.time()
     scheduler = BackgroundScheduler()
     # Programa la tarea para ejecutarse cada 10 minutos
     scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
