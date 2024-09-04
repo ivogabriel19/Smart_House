@@ -24,8 +24,7 @@ esp32_devices = {
 #esp_status = {}
 
 # Intervalo de verificación en segundos (10 minutos)
-#CHECK_INTERVAL = 600 #10 minutos
-CHECK_INTERVAL = 60 #1 minuto
+CHECK_INTERVAL = 600 #10 minutos
 # Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
 VERIFICATION_TIMEOUT = 10  
 
@@ -164,22 +163,17 @@ def handle_disconnect():
 #funcion que checkea la conectividad de los ESP
 def check_esp_status():
     global esp32_devices
-    while True:
-        print("Verificando estado de todos los ESP...")
-        for esp_id, esp_info in esp32_devices.items():
-            time_diff = time.time() - esp_info['last_seen']
-            if time_diff > CHECK_INTERVAL:
-                esp32_devices[esp_id]['status'] = 'Verificando'
-                verify_esp(esp_id, esp_info)
-                print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
-                # Enviar solicitud HTTP al ESP32 para verificar si sigue en línea
-                # Aquí puedes usar requests para enviar un GET al ESP32
-                # response = requests.get(f"http://{esp_ip}/check-status")
+    print("Verificando estado de todos los ESP...")
+    for esp_id, esp_info in esp32_devices.items():
+        time_diff = time.time() - esp_info['last_seen']
+        if time_diff > CHECK_INTERVAL:
+            esp32_devices[esp_id]['status'] = 'Verificando'
+            verify_esp(esp_id, esp_info)
+            print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+    print("Verificacion terminada!")
 
 
 #funcion que envia una solicitud get para checkear conectividad
-#FIXME: bucle infinito cuando falla el dummy
-#TODO: ahi le asigne tiempo al dummy no se si arregla el bug eso
 def verify_esp(esp_id, esp_info):
     try:
         response = requests.get(f"http://{esp_info['IP']}/status", timeout=VERIFICATION_TIMEOUT)
