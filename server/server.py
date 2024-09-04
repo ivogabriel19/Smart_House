@@ -167,8 +167,8 @@ def check_esp_status():
         time_diff = time.time() - esp_info['last_seen']
         if time_diff > CHECK_INTERVAL:
             esp32_devices[esp_id]['status'] = 'Verificando'
-            verify_esp(esp_id, esp_info)
             print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+            verify_esp(esp_id, esp_info)
     print("Verificacion terminada!")
 
 
