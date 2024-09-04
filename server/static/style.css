@@ -66,6 +66,32 @@ header{
         margin: 10px 0;
         list-style-type:none;
     }
+
+    /* Círculo verde o rojo como superíndice */
+    .estado {
+        width: 15px;
+        height: 15px;
+        border-radius: 50%;
+        display: inline-block;
+        position: relative;
+        top: -10px;
+    }
+}
+
+.base{
+    background-color: navy;
+}
+
+.conectado {
+    background-color: green;
+}
+
+.verificando {
+    background-color: yellow;
+}
+
+.desconectado {
+    background-color: red;
 }
 
 .sensor-container {

@@ -21,7 +21,7 @@ function fetchESPList() {
                     card.classList.add('card');
         
                     const idElement = document.createElement('p');
-                    idElement.innerText = espId;
+                    idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
                     idElement.id = 'esp-id';
                     
                     const list = document.createElement('ul');
@@ -162,7 +162,7 @@ socket.on('add_ESP_to_List', data => {
             card.classList.add('card');
 
             const idElement = document.createElement('p');
-            idElement.innerText = espId;
+            idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
             idElement.id = 'esp-id';
             
             const list = document.createElement('ul');
@@ -191,6 +191,11 @@ socket.on('add_ESP_to_List', data => {
             // Añade la tarjeta al contenedor
             container.appendChild(card);
     });
+});
+
+// Evento para manejar la desconexión
+socket.on('refresh_ESP_list', () => {
+    fetchESPList;
 });
 
 // Evento para manejar la desconexión

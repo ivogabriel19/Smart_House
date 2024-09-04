@@ -24,7 +24,7 @@ esp32_devices = {
 #esp_status = {}
 
 # Intervalo de verificación en segundos (10 minutos)
-CHECK_INTERVAL = 600 #10 minutos
+CHECK_INTERVAL = 200 #not 10 minutos
 # Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
 VERIFICATION_TIMEOUT = 10  
 
@@ -161,6 +161,11 @@ def handle_connect():
 def handle_disconnect():
     print('Cliente desconectado')
 
+@app.route('/checkESP', methods=['GET'])
+def launch_check_esp_list():
+    check_esp_status()
+    return jsonify({})
+
 #funcion que checkea la conectividad de los ESP
 def check_esp_status():
     global esp32_devices
@@ -169,6 +174,7 @@ def check_esp_status():
         time_diff = time.time() - esp_info['last_seen']
         if time_diff > CHECK_INTERVAL:
             esp32_devices[esp_id]['status'] = 'Verificando'
+            socketio.emit('refresh_ESP_list')
             verify_esp(esp_id, esp_info)
             print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
     print("Verificacion terminada!")
