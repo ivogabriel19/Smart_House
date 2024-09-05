@@ -1,11 +1,4 @@
 let buttonState = "OFF";
-// Conectar al servidor Flask a través de WebSockets
-const socket = io();
-
-// Evento cuando el cliente se conecta
-socket.on('connect', () => {
-    console.log('Conectado al servidor');
-});
 
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
@@ -193,6 +186,10 @@ socket.on('disconnect', () => {
 });
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
-window.onload = fetchESPList;
+window.onload = () => {
+    fetchESPList();
+    refresh_ESP_list();
+    console.log("We are on live!");
+};
 
 //setInterval(fetchSensorData, 300000);
