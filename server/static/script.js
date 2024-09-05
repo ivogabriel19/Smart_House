@@ -156,6 +156,8 @@ function refresh_ESP_list(){
 
             }
         }
+        console.log("");
+    
     })
     .catch(error => {
         console.error('Error fetching ESP list:', error);
@@ -198,7 +200,7 @@ socket.on('add_ESP_to_List', data => {
             card.classList.add('card');
 
             const idElement = document.createElement('p');
-            idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
+            idElement.innerHTML = `${espId}<span class="estado base" id="esp-id-estado"></span>`;
             idElement.id = 'esp-id';
             
             const list = document.createElement('ul');
@@ -245,5 +247,3 @@ window.onload = () => {
     refresh_ESP_list();
     console.log("We are on live!");
 };
-
-//setInterval(fetchSensorData, 300000);
