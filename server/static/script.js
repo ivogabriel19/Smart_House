@@ -21,7 +21,7 @@ function fetchESPList() {
                     card.classList.add('card');
         
                     const idElement = document.createElement('p');
-                    idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
+                    idElement.innerHTML = `${espId}<span class="estado base" id="esp-id-estado"></span>`;
                     idElement.id = 'esp-id';
                     
                     const list = document.createElement('ul');
@@ -126,6 +126,42 @@ function fetchSensorData() {
 
 }
 
+function refresh_ESP_list(){
+    console.log("refreshing ESP List");
+    fetch('/api/esp/list')
+    .then(response => response.json())
+    .then(data => {
+        for (const espId in data) {
+            if (data.hasOwnProperty(espId)) {
+                
+                const espInfo = data[espId];
+                //FIXME: seleccionar el span especifico de la tarjeta correspondiente al esp actual
+                const listSpans = document.querySelectorAll('#esp-id-estado');
+                Array.from(listSpans).find(function(spanEstado) {
+
+                    if (spanEstado.parentElement.textContent == espId){
+                        spanEstado.classList.remove('conectado', 'verificando', 'desconectado', 'base')
+    
+                        console.log(espId + " status: " + espInfo.status );
+    
+                        if (espInfo.status == "Online")
+                            spanEstado.classList.add('conectado')
+                        if (espInfo.status == "Verificando")
+                            spanEstado.classList.add('verificando')
+                        if (espInfo.status == "Offline")
+                            spanEstado.classList.add('desconectado')
+                    }
+                });
+                
+
+            }
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching ESP list:', error);
+    });
+}
+
 // Evento cuando el cliente se conecta
 socket.on('connect', () => {
     console.log('Conectado al servidor');
@@ -195,32 +231,7 @@ socket.on('add_ESP_to_List', data => {
 
 // Evento para manejar la desconexión
 socket.on('refresh_ESP_list', () => {
-    console.log("refreshing ESP List");
-    fetch('/api/esp/list')
-        .then(response => response.json())
-        .then(data => {
-            for (const espId in data) {
-                if (data.hasOwnProperty(espId)) {
-                    
-                    const espInfo = data[espId];
-                    //FIXME: seleccionar el span especifico de la tarjeta correspondiente al esp actual
-                    const spanEstado = document.getElementById('esp-id-estado')
-                    spanEstado.classList.remove('conectado', 'verificando', 'desconectado', 'base')
-
-                    //console.log(espId + "status: " + espInfo.status );
-
-                    if (espInfo.status == "Online")
-                        spanEstado.classList.add('conectado')
-                    if (espInfo.status == "Verificando")
-                        spanEstado.classList.add('verificando')
-                    if (espInfo.status == "Offline")
-                        spanEstado.classList.add('desconectado')
-                }
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching ESP list:', error);
-        });
+    refresh_ESP_list();
 });
 
 // Evento para manejar la desconexión
@@ -229,6 +240,10 @@ socket.on('disconnect', () => {
 });
 
 // Llamar a la función para obtener la lista de ESP al cargar la página
-window.onload = fetchESPList;
+window.onload = () => {
+    fetchESPList();
+    refresh_ESP_list();
+    console.log("We are on live!");
+};
 
 //setInterval(fetchSensorData, 300000);

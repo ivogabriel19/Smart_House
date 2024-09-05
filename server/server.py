@@ -24,7 +24,7 @@ esp32_devices = {
 #esp_status = {}
 
 # Intervalo de verificación en segundos (10 minutos)
-CHECK_INTERVAL = 200 #not 10 minutos
+CHECK_INTERVAL = 60 # 1 minutos
 # Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
 VERIFICATION_TIMEOUT = 10  
 
