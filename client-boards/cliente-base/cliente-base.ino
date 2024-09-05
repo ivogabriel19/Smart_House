@@ -5,11 +5,11 @@
 #include <HTTPClient.h>
 
 //#define HEARTBEAT_FRECUENCY 300000 // 300.000ms = 5min
-#define HEARTBEAT_FRECUENCY 120000 // 120.000ms = 2min
+#define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
 
-const char* ssid = "Dejen dormir";
-const char* password = "0descensos";
-const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servidor
+const char* ssid = "raspi";
+const char* password = "raspiraspi";
+const char* serverName = "http://192.168.1.138:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_001";  // Identificador único para cada ESP32
 String esp_type = "Basico";  // Identificador del tipo de tarea del ESP32
@@ -20,8 +20,7 @@ void handleStatus() {
     server.send(200, "text/plain", "ESP32 OK");
 }
 
-void setup() {
-    Serial.begin(115200);
+void connectWifi(){
     WiFi.begin(ssid, password);
 
     while (WiFi.status() != WL_CONNECTED) {
@@ -29,6 +28,11 @@ void setup() {
         Serial.println("Conectando a WiFi...");
     }
     Serial.println("Conectado a la red WiFi");
+}
+
+void setup() {
+    Serial.begin(115200);
+    connectWifi();
 
     server.on("/status", handleStatus);
     server.begin();
