@@ -2,9 +2,12 @@
 #include <HTTPClient.h>
 #include "DHT.h"
 
-const char* ssid = "Dejen dormir";
-const char* password = "0descensos";
-const char* serverName = "http://192.168.0.19:5000";  // Dirección IP del servidor
+#define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
+#define PUBLISH_FRECUENCY 30000 
+
+const char* ssid = "raspi";
+const char* password = "raspiraspi";
+const char* serverName = "http://192.168.1.138:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_003";  // Identificador único para cada ESP32
 String esp_type = "Sensor";  // Identificador del tipo de tarea del ESP32
@@ -28,11 +31,22 @@ void setup() {
     Serial.println("Conectado a la red WiFi");
 
     register_in_server();
+    send_heartbeat();
 }
 
 void loop() {
-    postTempHum();
-    delay(300000);  // Espera 5min antes de publicar nuevamente
+    static unsigned long marcaHeartBeat = 0;
+    static unsigned long marcaTyH = 0;
+
+    if (millis() - marcaHeartBeat > HEARTBEAT_FRECUENCY){
+        marcaHeartBeat = millis();
+        send_heartbeat();
+    }
+
+    if (millis() - marcaTyH > PUBLISH_FRECUENCY){
+        marcaTyH = millis();
+        postTempHum();
+    }
 }
 
 void register_in_server(){
@@ -87,5 +101,29 @@ void postTempHum(){
         }
 
         request.end(); // Cierra la conexión
+    }
+}
+
+void send_heartbeat(){
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.begin(String(serverName) + "/heartbeat");
+        http.addHeader("Content-Type", "application/json");
+        
+        String postData = "{\"id\":\""+device_id+"\"}";  // Envía el ID del ESP32
+
+        int httpResponseCode = http.POST(postData);
+
+        if (httpResponseCode > 0) {
+        String response = http.getString();
+        Serial.println(httpResponseCode);
+        Serial.println(response);
+        }
+        else {
+        Serial.print("Error on sending POST: ");
+        Serial.println(httpResponseCode);
+        }
+        
+        http.end();
     }
 }

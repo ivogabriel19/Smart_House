@@ -1,24 +1,14 @@
 const data = {
-        "Dummy_ESP1": {
+        "Dummy_ESP": {
             "IP": "0.0.0.1",
             "MAC" : "00:00:00:00:00:01",
-            "status": "non-existent"
-        },
-        "Dummy_ESP2": {
-            "IP": "0.0.0.2",
-            "MAC" : "00:00:00:00:00:02",
-            "status": "non-existent"
-        },
-        "Dummy_ESP3": {
-            "IP": "0.0.0.3",
-            "MAC" : "00:00:00:00:00:03",
             "status": "non-existent"
         }
     }
 
     const container = document.querySelector('.cards-container');
     container.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
-    console.log(container);
+    //console.log(container);
 
     // Recorre cada ESP en el JSON
     for (const espId in data) {
@@ -30,8 +20,10 @@ const data = {
             card.classList.add('card');
 
             const idElement = document.createElement('p');
-            idElement.innerText = espId;
+            idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
             idElement.id = 'esp-id';
+
+            //const
             
             const list = document.createElement('ul');
             
@@ -55,3 +47,11 @@ const data = {
             container.appendChild(card);
         }
     }
+
+    const estado = document.getElementById("esp-id-estado")
+    console.log(estado)
+
+    estado.classList.remove('base')
+    // estado.classList.add('desconectado')
+    // estado.classList.add('verificando')
+    // estado.classList.add('conectado')
