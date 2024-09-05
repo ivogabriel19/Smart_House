@@ -7,6 +7,7 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 socketio = SocketIO(app)
+socketio = SocketIO(app)
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {

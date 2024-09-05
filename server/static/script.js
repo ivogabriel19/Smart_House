@@ -1,4 +1,11 @@
 let buttonState = "OFF";
+// Conectar al servidor Flask a través de WebSockets
+const socket = io();
+
+// Evento cuando el cliente se conecta
+socket.on('connect', () => {
+    console.log('Conectado al servidor');
+});
 
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
@@ -91,19 +98,6 @@ function toggleButtonState() {
     .catch((error) => {
         console.error('Error:', error);
     });
-}
-
-// Función para simular la obtención de datos JSON desde el servidor
-function dummy_fetchSensorData() {
-    // Supongamos que este JSON se obtiene de una respuesta HTTP desde un servidor Flask
-    const sensorData = {
-        "temperatura": "29.6º",
-        "humedad": "50.0%"
-    };
-
-    // Actualiza el contenido de los elementos del DOM
-    document.getElementById('temperature').innerText = sensorData.temperatura;
-    document.getElementById('humidity').innerText = sensorData.humedad;
 }
 
 // Función para simular la obtención de datos JSON desde el servidor
