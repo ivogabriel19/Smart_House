@@ -87,6 +87,7 @@ def heartbeat():
     if esp_id in esp32_devices.keys():
         esp32_devices[esp_id]["last_seen"] = time.time()
         esp32_devices[esp_id]["status"] = "Online"
+        #socketio.emit('refresh_ESP_list')
         print("Heartbeat recibido desde " + esp_id)
         return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
     else:
@@ -163,7 +164,8 @@ def handle_disconnect():
 
 @app.route('/checkESP', methods=['GET'])
 def launch_check_esp_list():
-    check_esp_status()
+    #check_esp_status()
+    socketio.emit('refresh_ESP_list')
     return jsonify({})
 
 #funcion que checkea la conectividad de los ESP
