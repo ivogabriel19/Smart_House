@@ -4,9 +4,11 @@
 
 import time
 import requests
+from datetime import datetime
+
 
 SERVER_URL = "http://localhost:5000"
-CYCLE_TIME = 90
+CYCLE_TIME = 30
 contentRegister = { "device_id" : "Fake_ESP", "MAC" : "24:0A:C4:1A:2B:3C","type": "fictional"}
 contentHeartbeat = {"id": "Fake_ESP"}
 
@@ -23,7 +25,7 @@ def send_heartbeat():
     try:
         # Enviar "heartbeat" al servidor
         response = requests.post(SERVER_URL+"/heartbeat", json=contentHeartbeat)
-        print(f"Heartbeat enviado, respuesta: {response.status_code}")
+        print(f"Heartbeat enviado, respuesta: {response.status_code} Marca de tiempo: " + str(datetime.now().time()))
     except Exception as e:
         print(f"Error al enviar heartbeat: {e}")
 
