@@ -23,7 +23,6 @@ const data = {
             idElement.innerHTML = `${espId} <span class="estado base" id="esp-id-estado"></span>`;
             idElement.id = 'esp-id';
 
-            //const
             
             const list = document.createElement('ul');
             
