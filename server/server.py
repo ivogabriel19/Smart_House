@@ -12,13 +12,13 @@ socketio = SocketIO(app)
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {
     
-        "Dummy_ESP": {
-            "IP": "0.0.0.1",
-            "MAC" : "00:00:00:00:00:01",
-            "status": "non-existent",
-            "type": "fictional",
-            "last_seen" : time.time()
-        }
+        # "Dummy_ESP": {
+        #     "IP": "0.0.0.1",
+        #     "MAC" : "00:00:00:00:00:01",
+        #     "status": "non-existent",
+        #     "type": "fictional",
+        #     "last_seen" : time.time()
+        # }
 }
 
 # Diccionario para almacenar la última vez que se recibió un heartbeat de cada ESP32
@@ -200,7 +200,7 @@ def verify_esp(esp_id, esp_info):
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
 #    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
-    esp32_devices["Dummy_ESP"]["last_seen"] = time.time()
+    #esp32_devices["Dummy_ESP"]["last_seen"] = time.time()
     scheduler = BackgroundScheduler()
     # Programa la tarea para ejecutarse cada 10 minutos
     scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
