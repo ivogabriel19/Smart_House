@@ -175,8 +175,8 @@ def check_esp_status():
         time_diff = time.time() - esp_info['last_seen']
         if time_diff > CHECK_INTERVAL:
             esp32_devices[esp_id]['status'] = 'Verificando'
-            socketio.emit('refresh_ESP_list')
             verify_esp(esp_id, esp_info)
+            socketio.emit('refresh_ESP_list')
             print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
             verify_esp(esp_id, esp_info)
     print("Verificacion terminada!")
