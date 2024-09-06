@@ -9,12 +9,14 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 - **ESP32 como clientes**: Se conectan al servidor Flask para recibir instrucciones y controlar actuadores.
 - **Comunicación HTTP**: Los ESP32 intercambian peticiones HTTP con el servidor.
 - **Frontend simple**: La interfaz web está construida con HTML, CSS y JavaScript puro, sin frameworks adicionales.
-- **Sistema para Red de area local**: La Raspberry Pi está configurada para tener una IP dentro de la subred 192.168.1.x la cual buscaran los ESP32 para iniciar la comunicacion.
+- **Sistema para Red de area local**: La Raspberry Pi está configurada para tener una IP dentro de la subred 192.168.1.x la cual buscaran los ESP32 para iniciar la comunicacion..
+- **Heartbeat System**: Sistema de "latidos" para monitorear el estado de los ESP.
 
 ## Funcionalidades
 #### Front-end
 
 - Visualizacion de clientes ESP32 registrados y sus datos ✔
+- Visualizacion de estado de conexion de los ESP32 ✔
 - Logueo de usuario ⏳
 - Visualizacion de datos por ambiente ⏳
 - Visualizacion de datos del control de acceso ⏳
@@ -27,6 +29,7 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 
 #### Back-end
 - Recepcion de registro de ESPs ✔
+- Backgroun del sistema de "Heartbeat" de los ESPs ✔
 - Usuarios ⏳
 - Persistencia de informacion ⏳
 - Respuesta a las solicitudes del Front ✔
@@ -41,6 +44,7 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 
 #### ESP
 - Registro en servidor central ✔
+- Envio de "heartbeats" ✔
 - Recibir datos desde el servidor ⏳
 - Codigo para monitoreo de ambiente (Luz, movimiento, temperatura, humedad, aire) ⏳
 - Codigo para control de acceso ⏳
