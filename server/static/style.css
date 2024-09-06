@@ -75,23 +75,74 @@ header{
         display: inline-block;
         position: relative;
         top: -10px;
+        left: 8px;
+        /* box-shadow: 0px 0px 10px 2px navy; */
+        
+        animation-timing-function: ease-in;
+        animation-duration: 1s;
+        animation-iteration-count: infinite;
+        animation-direction: alternate;
     }
 }
 
 .base{
     background-color: navy;
+    animation-name: latidoAzul;
+}
+
+@keyframes latidoAzul {
+    from {
+        box-shadow: 0px 0px 5px 0px blue;
+    }
+
+    to {
+        box-shadow: 0px 0px 5px 2px blue;
+    }
 }
 
 .conectado {
     background-color: lime;
+    animation-name: latidoVerde;
+}
+
+@keyframes latidoVerde {
+    from {
+        box-shadow: 0px 0px 5px 0px lime;
+    }
+
+    to {
+        box-shadow: 0px 0px 5px 2px lime;
+    }
 }
 
 .verificando {
     background-color: yellow;
+    animation-name: latidoAmarillo;
+}
+
+@keyframes latidoAmarillo {
+    from {
+        box-shadow: 0px 0px 5px 0px yellow;
+    }
+
+    to {
+        box-shadow: 0px 0px 5px 2px yellow;
+    }
 }
 
 .desconectado {
     background-color: red;
+    animation-name: latidoRojo;
+}
+
+@keyframes latidoRojo {
+    from {
+        box-shadow: 0px 0px 5px 0px red;
+    }
+
+    to {
+        box-shadow: 0px 0px 5px 2px red;
+    }
 }
 
 .sensor-container {
