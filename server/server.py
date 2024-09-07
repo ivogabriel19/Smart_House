@@ -1,14 +1,12 @@
 from flask import Flask, request, jsonify, render_template
-import requests
 from flask_socketio import SocketIO, send, emit
-import time
 from apscheduler.schedulers.background import BackgroundScheduler
-
+import requests, time, json, os
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-socketio = SocketIO(app)
 
+#TODO: que las acciones de escritura de archivos esten relacionadas con las acciones del front y los ESP
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {
     
@@ -21,8 +19,14 @@ esp32_devices = {
         # }
 }
 
-# Diccionario para almacenar la última vez que se recibió un heartbeat de cada ESP32
-#esp_status = {}
+
+# Directorio donde se guardarán los archivos JSON de los ítems
+RUTA_ARCHIVO_ITEMS = './data/devices.json'
+
+# Asegurarse de que el archivo JSON existe o crearlo
+if not os.path.exists(RUTA_ARCHIVO_ITEMS):
+    with open(RUTA_ARCHIVO_ITEMS, 'w') as file:
+        json.dump([], file)  # Guardamos una lista vacía en el archivo json
 
 # Intervalo de verificación en segundos (10 minutos)
 CHECK_INTERVAL = 60 # 1 minutos
@@ -35,6 +39,95 @@ button_state = "OFF"
 temp = 0.0
 hum = 0.0
 
+# Función auxiliar para leer todos los ítems del archivo JSON
+def leer_items():
+    with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
+        return json.load(archivo)
+
+# Función auxiliar para guardar todos los ítems en el archivo JSON
+def guardar_items(items):
+    with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
+        json.dump(items, archivo, indent=4)
+
+#funcion auxiliar para agregar un item al json
+def guardar_item(item):
+    nuevo_item = item
+    
+    if not nuevo_item:
+        return jsonify({"error": "No se recibieron datos"})
+    
+    items = leer_items()
+    items.append(nuevo_item)
+    
+    guardar_items(items)
+    
+    return jsonify({"message": "Ítem guardado exitosamente"})
+
+# Endpoint para agregar un ítem nuevo al archivo JSON
+@app.route('/guardar_item', methods=['POST'])
+def guardar_item_received():
+    nuevo_item = request.json
+    
+    if not nuevo_item:
+        return jsonify({"error": "No se recibieron datos"}), 400
+    
+    items = leer_items()
+    items.append(nuevo_item)
+    
+    guardar_items(items)
+    
+    return jsonify({"message": "Ítem guardado exitosamente"}), 201
+
+# Endpoint para leer todos los ítems del archivo JSON
+@app.route('/leer_items', methods=['GET'])
+def leer_items_endpoint():
+    items = leer_items()
+    return jsonify(items), 200
+
+# Endpoint para leer un ítem específico por su "device_id"
+@app.route('/leer_item/<string:device_id>', methods=['GET'])
+def leer_item(device_id):
+    items = leer_items()
+    
+    # Buscar el ítem con el "device_id" especificado
+    for item in items:
+        if item.get('device_id') == device_id:
+            return jsonify(item), 200
+    
+    # Si no se encuentra el ítem
+    return jsonify({"error": f"No se encontró el ítem con device_id {device_id}"}), 404
+
+
+# Endpoint para modificar un ítem existente por su ID (o cualquier otro identificador)
+@app.route('/modificar_item/<string:device_id>', methods=['PUT'])
+def modificar_item(device_id):
+    items = leer_items()
+    
+    for item in items:
+        if item.get('device_id') == device_id:
+            nuevos_datos = request.json
+            if not nuevos_datos:
+                return jsonify({"error": "No se recibieron datos para actualizar"}), 400
+            item.update(nuevos_datos)
+            guardar_items(items)
+            return jsonify({"message": f"Ítem {device_id} actualizado exitosamente"}), 200
+    
+    #FIXME: var
+    return jsonify({"error": f"No se encontró el ítem con ID {item_id}"}), 404
+
+# Endpoint para eliminar un ítem por su ID (o cualquier otro identificador)
+@app.route('/eliminar_item/<string:device_id>', methods=['DELETE'])
+def eliminar_item(device_id):
+    items = leer_items()
+    
+    items_actualizados = [item for item in items if item.get('device_id') != device_id]
+    
+    if len(items) == len(items_actualizados):
+        return jsonify({"error": f"No se encontró el ítem con ID {device_id}"}), 404
+    
+    guardar_items(items_actualizados)
+    
+    return jsonify({"message": f"Ítem {device_id} eliminado exitosamente"}), 200
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
@@ -55,6 +148,7 @@ def register_device():
             "last_seen": time.time(),
             "type": device_type
         }
+        guardar_item({device_id:esp32_devices[device_id]})
 
         esp = {}
         esp[device_id] = {
@@ -75,8 +169,8 @@ def register_device():
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
     print("ESP registrados: ")
-    print(esp32_devices)
-    return jsonify(esp32_devices)
+    print(leer_items)
+    return jsonify(leer_items)
 
 #ruta para recibir los "heartbeats"
 @app.route('/heartbeat', methods=['POST'])
