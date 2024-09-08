@@ -39,6 +39,23 @@ button_state = "OFF"
 temp = 0.0
 hum = 0.0
 
+# Función para cargar los ítems en memoria al iniciar la aplicación
+def cargar_items_en_memoria():
+    global esp32_devices
+    if os.path.exists(RUTA_ARCHIVO_ITEMS):
+        with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
+            try:
+                esp32_devices = json.load(archivo)
+            except json.JSONDecodeError:
+                esp32_devices = []  # Inicializa como lista vacía si el JSON está malformado
+    else:
+        esp32_devices = []  # Inicializa como lista vacía si el archivo no existe
+
+# Función para guardar los ítems en memoria al archivo JSON
+def guardar_items_en_memoria():
+    with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
+        json.dump(esp32_devices, archivo, indent=4)
+
 # Función auxiliar para leer todos los ítems del archivo JSON
 def leer_items():
     with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
@@ -128,6 +145,7 @@ def eliminar_item(device_id):
     guardar_items(items_actualizados)
     
     return jsonify({"message": f"Ítem {device_id} eliminado exitosamente"}), 200
+
 @app.route('/')
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
@@ -141,6 +159,7 @@ def register_device():
     device_type = data.get('type')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     if device_id not in esp32_devices:
+        #Gurado nuevo ESP en memorio
         esp32_devices[device_id] = {
             "IP": device_ip,
             "MAC" : device_mac,
@@ -148,6 +167,7 @@ def register_device():
             "last_seen": time.time(),
             "type": device_type
         }
+        #Guardo nuevo ESP en archivo
         guardar_item({device_id:esp32_devices[device_id]})
 
         esp = {}
@@ -169,8 +189,8 @@ def register_device():
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
     print("ESP registrados: ")
-    print(leer_items)
-    return jsonify(leer_items)
+    print(esp32_devices)
+    return jsonify(esp32_devices)
 
 #ruta para recibir los "heartbeats"
 @app.route('/heartbeat', methods=['POST'])
@@ -294,8 +314,10 @@ def verify_esp(esp_id, esp_info):
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
 #    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
-    #esp32_devices["Dummy_ESP"]["last_seen"] = time.time()
+    # Cargar los datos en memoria al iniciar el servidor
+    cargar_items_en_memoria()
     scheduler = BackgroundScheduler()
+
     # Programa la tarea para ejecutarse cada 10 minutos
     scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
     scheduler.start()
