@@ -7,7 +7,6 @@ from apscheduler.schedulers.background import BackgroundScheduler
 
 app = Flask(__name__)
 socketio = SocketIO(app)
-socketio = SocketIO(app)
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
 esp32_devices = {
@@ -180,6 +179,7 @@ def check_esp_status():
             print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
             verify_esp(esp_id, esp_info)
     print("Verificacion terminada!")
+    socketio.emit('refresh_ESP_list')
 
 
 #funcion que envia una solicitud get para checkear conectividad
