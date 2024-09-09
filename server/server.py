@@ -92,22 +92,6 @@ def heartbeat():
         print("Heartbeat no corresponde a un dispositivo registrado")
         return jsonify({"message": "Heartbeat recibido", "status": "Failed"}), 400
 
-# FIXME: la estructura de los datos en general, tanto aca como en los ESP
-@app.route('/send_command/<device_id>', methods=['POST'])
-def send_command(device_id):
-    if device_id in esp32_devices:
-        esp32_ip = f"http://{esp32_devices[device_id]['ip']}:80/actuate"
-        command_value = request.json.get("value")
-
-        # Se envía el comando al ESP32 con el valor para el actuador
-        try:
-            response = requests.post(esp32_ip, json={"value": command_value})
-            return jsonify({"status": "success", "response": response.text}), 200
-        except requests.exceptions.RequestException as e:
-            return jsonify({"status": "error", "message": str(e)}), 500
-    else:
-        return jsonify({"status": "error", "message": "Dispositivo no encontrado"}), 404
-
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():

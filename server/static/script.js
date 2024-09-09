@@ -122,7 +122,6 @@ function refresh_ESP_list(){
             if (data.hasOwnProperty(espId)) {
                 
                 const espInfo = data[espId];
-                //FIXME: seleccionar el span especifico de la tarjeta correspondiente al esp actual
                 const listSpans = document.querySelectorAll('#esp-id-estado');
                 Array.from(listSpans).find((spanEstado) => {
 
