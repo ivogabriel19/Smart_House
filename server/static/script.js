@@ -3,6 +3,7 @@ let buttonState = "OFF";
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
 
+//FIXME: estructura
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
@@ -113,6 +114,7 @@ function fetchSensorData() {
 
 }
 
+//FIXME: estructura
 function refresh_ESP_list(){
     console.log("refreshing ESP List");
     fetch('/api/esp/list')
@@ -122,7 +124,6 @@ function refresh_ESP_list(){
             if (data.hasOwnProperty(espId)) {
                 
                 const espInfo = data[espId];
-                //FIXME: seleccionar el span especifico de la tarjeta correspondiente al esp actual
                 const listSpans = document.querySelectorAll('#esp-id-estado');
                 Array.from(listSpans).find(function(spanEstado) {
 
@@ -165,6 +166,7 @@ socket.on('sensor_update', (data) => {
     document.getElementById('humidity').innerText = data.humedad;
 });
 
+//FIXME: estructura
 //Evento para mostrar nuevos ESP que se conecten
 socket.on('add_ESP_to_List', data => {
     console.log("New ESP from server");
