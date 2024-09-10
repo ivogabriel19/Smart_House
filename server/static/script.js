@@ -22,7 +22,7 @@ function fetchESPList() {
                     card.classList.add('card');
         
                     const idElement = document.createElement('p');
-                    idElement.innerHTML = `${espId}<span class="estado base" id="esp-id-estado"></span>`;
+                    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span>`;
                     idElement.id = 'esp-id';
                     
                     const list = document.createElement('ul');
