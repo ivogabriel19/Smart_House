@@ -3,7 +3,7 @@ let buttonState = "OFF";
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
 
-//FIXME: estructura
+//OK: estructura
 function fetchESPList() {
     fetch('/api/esp/list')
         .then(response => response.json())
@@ -168,56 +168,45 @@ socket.on('sensor_update', (data) => {
 
 //FIXME: estructura
 //Evento para mostrar nuevos ESP que se conecten
-socket.on('add_ESP_to_List', data => {
+socket.on('add_ESP_to_List', espInfo => {
     console.log("New ESP from server");
     //console.log(data);
 
     const container = document.querySelector('.cards-container');
 
-    Object.keys(data).forEach(espId => {
-            // const details = data[espId];
-            // console.log(`Device: ${espId}`);
-            // console.log(`IP: ${details.ip}`);
-            // console.log(`MAC: ${details.mac}`);
-            // console.log(`Status: ${details.status}`);
-            // console.log('-------------');
+    // Crea una tarjeta para cada ESP
+    const card = document.createElement('div');
+    card.classList.add('card');
 
-            const espInfo = data[espId];
-        
-            // Crea una tarjeta para cada ESP
-            const card = document.createElement('div');
-            card.classList.add('card');
+    const idElement = document.createElement('p');
+    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span>`;
+    idElement.id = 'esp-id';
+    
+    const list = document.createElement('ul');
+    
+    const ipItem = document.createElement('li');
+    ipItem.innerHTML = `<strong>IP:</strong> <span id="esp-ip">${espInfo.IP}</span>`;
+    
+    const macItem = document.createElement('li');
+    macItem.innerHTML = `<strong>MAC:</strong> <span id="esp-mac">${espInfo.MAC}</span>`;
+    
+    const statusItem = document.createElement('li');
+    statusItem.innerHTML = `<strong>Status:</strong> <span id="esp-status">${espInfo.status}</span>`;
+    
+    const typeItem = document.createElement('li');
+    typeItem.innerHTML = `<strong>Type:</strong> <span id="esp-type">${espInfo.type}</span>`;
+    
 
-            const idElement = document.createElement('p');
-            idElement.innerHTML = `${espId}<span class="estado base" id="esp-id-estado"></span>`;
-            idElement.id = 'esp-id';
-            
-            const list = document.createElement('ul');
-            
-            const ipItem = document.createElement('li');
-            ipItem.innerHTML = `<strong>IP:</strong> <span id="esp-ip">${espInfo.IP}</span>`;
-            
-            const macItem = document.createElement('li');
-            macItem.innerHTML = `<strong>MAC:</strong> <span id="esp-mac">${espInfo.MAC}</span>`;
-            
-            const statusItem = document.createElement('li');
-            statusItem.innerHTML = `<strong>Status:</strong> <span id="esp-status">${espInfo.status}</span>`;
-            
-            const typeItem = document.createElement('li');
-            typeItem.innerHTML = `<strong>Type:</strong> <span id="esp-type">${espInfo.type}</span>`;
-            
-
-            list.appendChild(ipItem);
-            list.appendChild(macItem);
-            list.appendChild(statusItem);
-            list.appendChild(typeItem);
-            
-            card.appendChild(idElement);
-            card.appendChild(list);
-            
-            // Añade la tarjeta al contenedor
-            container.appendChild(card);
-    });
+    list.appendChild(ipItem);
+    list.appendChild(macItem);
+    list.appendChild(statusItem);
+    list.appendChild(typeItem);
+    
+    card.appendChild(idElement);
+    card.appendChild(list);
+    
+    // Añade la tarjeta al contenedor
+    container.appendChild(card);
 });
 
 // Evento para manejar la desconexión
