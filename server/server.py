@@ -9,7 +9,7 @@ socketio = SocketIO(app)
 #TODO: cambiar estructura para almacenar los ESP de un diccionario con un diccionario adentro a un objeto
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
-esp32_devices = {
+esp32_devices = [
         # {   
         #     "ID": "Dummy ESP"
         #     "IP": "0.0.0.1",
@@ -18,7 +18,7 @@ esp32_devices = {
         #     "type": "fictional",
         #     "last_seen" : time.time()
         # }
-}
+]
 
 
 # Directorio donde se guardarán los archivos JSON de los ítems
@@ -40,7 +40,7 @@ button_state = "OFF"
 temp = 0.0
 hum = 0.0
 
-#TODO: checkear
+#FIXME: obsoleto
 # Función para cargar los ítems en memoria al iniciar la aplicación
 def cargar_items_en_memoria():
     global esp32_devices
@@ -53,44 +53,28 @@ def cargar_items_en_memoria():
     else:
         esp32_devices = []  # Inicializa como lista vacía si el archivo no existe
 
-#TODO: checkear
+#FIXME: obsoleto
 # Función para guardar los ítems en memoria al archivo JSON
 def guardar_items_en_memoria():
     with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
         json.dump(esp32_devices, archivo, indent=4)
 
-#TODO: checkear
+#OK:
 # Función auxiliar para leer todos los ítems del archivo JSON
 def leer_items():
     with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
         return json.load(archivo)
 
-#TODO: checkear
+#OK:
 # Función auxiliar para guardar todos los ítems en el archivo JSON
 def guardar_items(items):
     with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
         json.dump(items, archivo, indent=4)
 
-#TODO: checkear
+#TODO: checkear return
 #funcion auxiliar para agregar un item al json
 def guardar_item(item):
     nuevo_item = item
-    
-    if not nuevo_item:
-        return jsonify({"error": "No se recibieron datos"})
-    
-    items = leer_items()
-    items.append(nuevo_item)
-    
-    guardar_items(items)
-    
-    return jsonify({"message": "Ítem guardado exitosamente"})
-
-#TODO: checkear
-# Endpoint para agregar un ítem nuevo al archivo JSON
-@app.route('/guardar_item', methods=['POST'])
-def guardar_item_received():
-    nuevo_item = request.json
     
     if not nuevo_item:
         return jsonify({"error": "No se recibieron datos"}), 400
@@ -103,13 +87,19 @@ def guardar_item_received():
     return jsonify({"message": "Ítem guardado exitosamente"}), 201
 
 #TODO: checkear
+# Endpoint para agregar un ítem nuevo al archivo JSON
+@app.route('/guardar_item', methods=['POST'])
+def guardar_item_received():
+    return jsonify(guardar_item(request.json))
+
+#OK:
 # Endpoint para leer todos los ítems del archivo JSON
 @app.route('/leer_items', methods=['GET'])
 def leer_items_endpoint():
     items = leer_items()
     return jsonify(items), 200
 
-#FIXME: corregir ID
+#OK:
 # Endpoint para leer un ítem específico por su "device_id"
 @app.route('/leer_item/<string:device_id>', methods=['GET'])
 def leer_item(device_id):
@@ -123,7 +113,7 @@ def leer_item(device_id):
     # Si no se encuentra el ítem
     return jsonify({"error": f"No se encontró el ítem con device_id {device_id}"}), 404
 
-#FIXME: corregir ID
+#FIXME: revisar
 # Endpoint para modificar un ítem existente por su ID (o cualquier otro identificador)
 @app.route('/modificar_item/<string:device_id>', methods=['PUT'])
 def modificar_item(device_id):
@@ -138,10 +128,9 @@ def modificar_item(device_id):
             guardar_items(items)
             return jsonify({"message": f"Ítem {device_id} actualizado exitosamente"}), 200
     
-    #FIXME: var
-    return jsonify({"error": f"No se encontró el ítem con ID {item_id}"}), 404
+    return jsonify({"error": f"No se encontró el ítem con ID {device_id}"}), 404
 
-#FIXME: corregir ID
+#FIXME: revisar
 # Endpoint para eliminar un ítem por su ID (o cualquier otro identificador)
 @app.route('/eliminar_item/<string:device_id>', methods=['DELETE'])
 def eliminar_item(device_id):
@@ -160,7 +149,7 @@ def eliminar_item(device_id):
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
 
-#FIXME: estructura
+#TODO: checkear
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
 def register_device():
@@ -169,57 +158,77 @@ def register_device():
     device_mac = data.get('MAC')
     device_type = data.get('type')
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
-    if device_id not in esp32_devices:
-        #Gurado nuevo ESP en memorio
-        esp32_devices[device_id] = {
+    
+    # Verificar si el dispositivo ya está registrado en la lista
+    device_exists = any(device['ID'] == device_id for device in esp32_devices)
+    
+    if not device_exists:
+        # Crear nuevo diccionario para el ESP
+        new_device = {
+            "ID": device_id,
             "IP": device_ip,
-            "MAC" : device_mac,
+            "MAC": device_mac,
             "status": "Online",
             "last_seen": time.time(),
             "type": device_type
         }
-        #Guardo nuevo ESP en archivo
-        guardar_item({device_id:esp32_devices[device_id]})
-
-        esp = {}
-        esp[device_id] = {
-            "IP": device_ip,
-            "MAC" : device_mac,
-            "status": "Online",
-            "last_seen": time.time(),
-            "type": device_type
-        }
-        # envia al front los datos recien recibidos
-        socketio.emit('add_ESP_to_List', esp)
+        
+        # Guardar nuevo ESP en memoria
+        #esp32_devices.append(new_device)
+        
+        # Guardar nuevo ESP en archivo
+        guardar_item(new_device)  # guarda el nuevo dispositivo en archivo
+        
+        # Enviar datos al front
+        socketio.emit('add_ESP_to_List', new_device)
+        
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
         print("Dispositivo ya registrado")
         return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
 
-#TODO: checkear
+#OK:
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
     print("ESP registrados: ")
-    print(esp32_devices)
-    return jsonify(esp32_devices)
+    print(leer_items())
+    return leer_items()
 
-#FIXME: estructura
+#OK:?
 #ruta para recibir los "heartbeats"
 @app.route('/heartbeat', methods=['POST'])
 def heartbeat():
     data = request.json
     esp_id = data.get('id')
-    if esp_id in esp32_devices.keys():
-        esp32_devices[esp_id]["last_seen"] = time.time()
-        esp32_devices[esp_id]["status"] = "Online"
-        #socketio.emit('refresh_ESP_list')
-        print("Heartbeat recibido desde " + esp_id)
+
+    # Cargar la lista de dispositivos desde el archivo
+    dispositivos = leer_items()
+
+    # Buscar el dispositivo en la lista de diccionarios
+    dispositivo_encontrado = False
+    for device in dispositivos:
+        if device["ID"] == esp_id:
+            # Actualizar last_seen y status
+            device["last_seen"] = time.time()
+            device["status"] = "Online"
+            dispositivo_encontrado = True
+            break
+
+    if dispositivo_encontrado:
+        # Guardar los cambios en el archivo JSON
+        guardar_items(dispositivos)
+
+        # Emitir un evento de actualización al frontend si es necesario
+        socketio.emit('refresh_ESP_list')
+
+        print(f"Heartbeat recibido desde {esp_id}")
         return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
     else:
         print("Heartbeat no corresponde a un dispositivo registrado")
-        return jsonify({"message": "Heartbeat recibido", "status": "Failed"}), 400
+        return jsonify({"message": "Heartbeat no corresponde a un dispositivo registrado", "status": "Failed"}), 400
 
+#OK:
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():
@@ -278,42 +287,46 @@ def launch_check_esp_list():
     socketio.emit('refresh_ESP_list')
     return jsonify({})
 
-#FIXME: estructura
+#OK: 
 #funcion que checkea la conectividad de los ESP
 def check_esp_status():
-    global esp32_devices
     print("Verificando estado de todos los ESP...")
-    for esp_id, esp_info in esp32_devices.items():
-        time_diff = time.time() - esp_info['last_seen']
+    # Cargar la lista de dispositivos desde el archivo
+    dispositivos = leer_items()
+    for device in dispositivos:
+        time_diff = time.time() - device['last_seen']
         if time_diff > CHECK_INTERVAL:
-            esp32_devices[esp_id]['status'] = 'Verificando'
+            device['status'] = 'Verificando'
             socketio.emit('refresh_ESP_list')
-            verify_esp(esp_id, esp_info)
-            print(f"ESP32 {esp_id} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
-            verify_esp(esp_id, esp_info)
-    print("Verificacion terminada!")
+            #verify_esp(device)
+            print(f"ESP32 {device['ID']} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
+            device['status'] = verify_esp(device)
+            if device['status'] == 'Online': device['last_seen'] = time.time()
+    # Guardar los cambios en el archivo después de la verificación
+    guardar_items(dispositivos)
+    print("Verificación terminada!")
 
-#FIXME: estructura
+#OK:
 #funcion que envia una solicitud get para checkear conectividad
-def verify_esp(esp_id, esp_info):
+def verify_esp(device):
     try:
-        response = requests.get(f"http://{esp_info['IP']}/status", timeout=VERIFICATION_TIMEOUT)
+        response = requests.get(f"http://{device['IP']}/status", timeout=VERIFICATION_TIMEOUT)
         if response.status_code == 200:
-            esp32_devices[esp_id]['status'] = 'Online'
-            esp32_devices[esp_id]['last_seen'] = time.time()  # Actualizar el tiempo de la última respuesta
-            print(f"{esp_id} está en línea después de la verificación.")
+            device['status'] = 'Online'
+            #device['last_seen'] = time.time()  # Actualizar el tiempo de la última respuesta
+            print(f"{device['ID']} está en línea después de la verificación.")
         else:
-            esp32_devices[esp_id]['status'] = 'Offline'
+            device['status'] = 'Offline'
     except requests.exceptions.RequestException:
-        esp32_devices[esp_id]['status'] = 'Offline'
-        print(f"{esp_id} está desconectado después de la verificación.")
+        device['status'] = 'Offline'
+        print(f"{device['ID']} está desconectado después de la verificación.")
+    
+    return device['status']
 
 
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
 #    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
-    # Cargar los datos en memoria al iniciar el servidor
-    cargar_items_en_memoria()
     scheduler = BackgroundScheduler()
 
     # Programa la tarea para ejecutarse cada 10 minutos
