@@ -131,7 +131,7 @@ def modificar_item(device_id):
 def eliminar_item(device_id):
     items = leer_items()
     
-    items_actualizados = [item for item in items if item.get('device_id') != device_id]
+    items_actualizados = [item for item in items if item.get('ID') != device_id]
     
     if len(items) == len(items_actualizados):
         return jsonify({"error": f"No se encontró el ítem con ID {device_id}"}), 404

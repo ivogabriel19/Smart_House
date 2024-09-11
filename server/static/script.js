@@ -1,7 +1,59 @@
 let buttonState = "OFF";
+let openBtns = document.querySelectorAll(".open-modal");
+let closeBtns = document.querySelectorAll(".close-modal");
+let modal = document.querySelector("[data-modal]");
+let confirmBtn = document.querySelector("[confirm-btn]");
 
+var esp_to_delete = "";
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
+
+closeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        modal.close();
+    })
+});
+
+confirmBtn.addEventListener("click", () =>{
+    //console.log(esp_to_delete + " deleted");    // TODO: fetch para eliminar ESP
+    //FIXME: a veces hace multiples llamados
+    fetch('/eliminar_item/' + esp_to_delete, {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+        })
+    })
+    .then(response => {
+        // Verificar el status code
+        if (response.status === 200) {
+            return response.json(); // Convertir la respuesta a JSON
+        } else {
+            throw new Error(`Error: Status code ${response.status}`);
+        }
+    }).then(data => {
+        console.log(data);
+        fetchESPList();
+    })
+    .catch(error => {
+        console.error('Error removing ' + esp_to_delete, error);
+    });
+    modal.close();
+})
+
+//esta funcion es porque los botones para abrir el modal se van generando dinamicamente
+function botones(){
+    openBtns = document.querySelectorAll(".open-modal");
+
+    //Botones que manejan la eliminacion de uns ESP de la lista
+    openBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            modal.showModal();
+            esp_to_delete = btn.parentElement.textContent.slice(0, -1);
+        })
+    });
+}
 
 //OK: estructura
 function fetchESPList() {
@@ -22,7 +74,7 @@ function fetchESPList() {
                     card.classList.add('card');
         
                     const idElement = document.createElement('p');
-                    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span>`;
+                    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span>`;
                     idElement.id = 'esp-id';
                     
                     const list = document.createElement('ul');
@@ -63,6 +115,8 @@ function fetchESPList() {
             //     li.textContent = `ESP ID: ${key} || IP: ${details.ip}, Status: ${details.status}`;
             //     espList.appendChild(li);
             // });
+
+            botones();
         })
         .catch(error => {
             console.error('Error fetching ESP list:', error);
@@ -127,7 +181,7 @@ function refresh_ESP_list(){
                 const listSpans = document.querySelectorAll('#esp-id-estado');
                 Array.from(listSpans).find((spanEstado) => {
 
-                    if (spanEstado.parentElement.textContent == espInfo.ID){
+                    if (spanEstado.parentElement.textContent.slice(0, -1) == espInfo.ID){
                         spanEstado.classList.remove('conectado', 'verificando', 'desconectado', 'base')
     
                         console.log(espId + " status: " + espInfo.status );
@@ -145,7 +199,6 @@ function refresh_ESP_list(){
             }
         }
         console.log("");
-    
     })
     .catch(error => {
         console.error('Error fetching ESP list:', error);
@@ -179,7 +232,7 @@ socket.on('add_ESP_to_List', espInfo => {
     card.classList.add('card');
 
     const idElement = document.createElement('p');
-    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span>`;
+    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span>`;
     idElement.id = 'esp-id';
     
     const list = document.createElement('ul');
@@ -207,6 +260,9 @@ socket.on('add_ESP_to_List', espInfo => {
     
     // Añade la tarjeta al contenedor
     container.appendChild(card);
+
+    //aniade funcionalidad a los botones de la tarjeta
+    botones();
 });
 
 // Evento para manejar la desconexión

@@ -14,18 +14,23 @@
         <img src="{{ url_for('static', filename='home-logo.png') }}" alt="logo">
     </header>
     <section class="esp-list">
+        <dialog data-modal class="delete-confirm">
+            <p>¿Desea eliminar el dispositivo?</p>
+            <button confirm-btn class="confirm">Confirm</button>
+            <button data-close-modal class="close-modal">Cancel</button>
+        </dialog>
         <h1>Listado de ESP Conectados</h1>
-        <div class="cards-container" id="cards-container">
-
-        </div>
+        <main class="cards-container" id="cards-container">
+            <!-- Aqui el js cargara dinamicamente las tarjetas de los ESP -->
+        </main>
     </section>
     
     <section class="sensor-container">
         <h1>Datos del Sensor</h1>
-        <div class="sensor-data">
+        <main class="sensor-data">
             <p>Temperatura: <span id="temperature">Cargando...</span></p>
             <p>Humedad: <span id="humidity">Cargando...</span></p>
-        </div>
+        </main>
     </section>
 
     <section class="ON-OFF_button">

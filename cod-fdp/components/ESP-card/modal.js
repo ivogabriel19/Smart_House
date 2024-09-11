@@ -8,7 +8,7 @@ var esp_to_delete = "";
 openBtns.forEach(btn => {
     btn.addEventListener("click", () => {
         modal.showModal();
-        esp_to_delete = btn.parentElement.textContent;
+        esp_to_delete = btn.parentElement.textContent.slice(0, -1);
         console.log(esp_to_delete);
     })
 });

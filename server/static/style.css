@@ -27,6 +27,7 @@ section{
 
 header{
     height: 7vh;
+    min-height: 50px;
     background-color: #e0e0e0;
     padding: 0.5em;
 
@@ -51,15 +52,59 @@ header{
     box-shadow: 0 4px 8px rgba(0, 0, 0, .4);
     padding: 2vw 2vw;
     /* width: 150px; */
-    max-width: 40vw;
+    /* max-width: 40vw; */
     aspect-ratio: 16 / 9;
     text-align: start;
+    position: relative;
 
     p{
         font-size: 1.5em;
         font-weight: 600;
         border-bottom: 2px solid white;
         padding-bottom: 5px;
+
+        .estado {
+            margin-right: 30px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            top: -10px;
+            left: 8px;
+            /* box-shadow: 0px 0px 10px 2px navy; */
+            
+            animation-timing-function: ease-in;
+            animation-duration: .75s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+
+        .open-modal{
+            display: flex;
+            justify-content: center;
+            
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+    
+            background-color: gray;
+            border-radius: 50%;
+            height: 1rem;
+            width: 1rem;
+            font-size: 0.75rem;
+            
+            transition: 0.3s;
+            
+            &:hover{
+                background-color: red;
+                top: 0.5rem;
+                right: 0.5rem;
+                height: 1.5rem;
+                width: 1.5rem;
+                font-size: 1.25rem;
+            }
+        }
     }
 
     li{
@@ -68,20 +113,33 @@ header{
     }
 
     /* Círculo verde o rojo como superíndice */
-    .estado {
-        width: 15px;
-        height: 15px;
-        border-radius: 50%;
-        display: inline-block;
-        position: relative;
-        top: -10px;
-        left: 8px;
-        /* box-shadow: 0px 0px 10px 2px navy; */
-        
-        animation-timing-function: ease-in;
-        animation-duration: .75s;
-        animation-iteration-count: infinite;
-        animation-direction: alternate;
+}
+
+.delete-confirm{
+    margin: 2em;
+    padding: 0.5em;
+    position: absolute;
+
+    &::backdrop{
+        background-color: #222D;
+    }
+
+    button{
+        padding: 0.25rem;
+        border: none;
+        border-radius: 0.25rem;
+        background-color: #DDD;
+
+        transition: 0.1s;
+
+        &:hover{
+            font-weight: 800;
+        }
+    }
+
+    .confirm{
+        color: white;
+        background-color: red;
     }
 }
 
