@@ -5,7 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="style.css">
-    <script defer src="script.js"></script>
+    <!-- <script defer src="script.js"></script> -->
+    <script defer src="modal.js"></script>
 </head>
 <body>
     <h1>Listado de ESP Conectados</h1>
@@ -13,16 +14,19 @@
     </ul>
 
     <main class="cards-container">
-
-
-        <!-- <div class="card">
-            <p id="esp-id">Dummy esp</p>
+        <dialog data-modal class="delete-confirm">
+            <p>¿Desea eliminar el dispositivo?</p>
+            <button confirm-btn class="confirm">Confirm</button>
+            <button data-close-modal class="close-modal">Cancel</button>
+        </dialog>
+        <div class="card">
+            <p id="esp-id">Dummy_ESP<span class="estado" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span></p>
             <ul>
-                <li><strong>IP:</strong> <span id="esp-ip">192.168.1.148</span></li>
+                <li><strong>IP:</strong> <span id="esp-ip">0.0.0.1</span></li>
                 <li><strong>MAC:</strong> <span id="esp-mac">00:00:00:00:00:01</span></li>
-                <li><strong>Status:</strong> <span id="esp-status">Connected</span></li>
+                <li><strong>Status:</strong> <span id="esp-status">non-existent</span></li>
             </ul>
-        </div> -->
+        </div>
     </main>
 </body>
 </html>
