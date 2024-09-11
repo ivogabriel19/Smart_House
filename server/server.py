@@ -40,7 +40,7 @@ button_state = "OFF"
 temp = 0.0
 hum = 0.0
 
-#FIXME: obsoleto
+#WARNING: obsoleto
 # Función para cargar los ítems en memoria al iniciar la aplicación
 def cargar_items_en_memoria():
     global esp32_devices
@@ -59,19 +59,16 @@ def guardar_items_en_memoria():
     with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
         json.dump(esp32_devices, archivo, indent=4)
 
-#OK:
 # Función auxiliar para leer todos los ítems del archivo JSON
 def leer_items():
     with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
         return json.load(archivo)
 
-#OK:
 # Función auxiliar para guardar todos los ítems en el archivo JSON
 def guardar_items(items):
     with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
         json.dump(items, archivo, indent=4)
 
-#TODO: checkear return
 #funcion auxiliar para agregar un item al json
 def guardar_item(item):
     nuevo_item = item
@@ -86,20 +83,20 @@ def guardar_item(item):
     
     return jsonify({"message": "Ítem guardado exitosamente"}), 201
 
-#TODO: checkear
+#FIXME: dar uso
 # Endpoint para agregar un ítem nuevo al archivo JSON
 @app.route('/guardar_item', methods=['POST'])
 def guardar_item_received():
     return jsonify(guardar_item(request.json))
 
-#OK:
+#FIXME: dar uso
 # Endpoint para leer todos los ítems del archivo JSON
 @app.route('/leer_items', methods=['GET'])
 def leer_items_endpoint():
     items = leer_items()
     return jsonify(items), 200
 
-#OK:
+#FIXME: dar uso
 # Endpoint para leer un ítem específico por su "device_id"
 @app.route('/leer_item/<string:device_id>', methods=['GET'])
 def leer_item(device_id):
@@ -113,7 +110,7 @@ def leer_item(device_id):
     # Si no se encuentra el ítem
     return jsonify({"error": f"No se encontró el ítem con device_id {device_id}"}), 404
 
-#FIXME: revisar
+#FIXME: dar uso
 # Endpoint para modificar un ítem existente por su ID (o cualquier otro identificador)
 @app.route('/modificar_item/<string:device_id>', methods=['PUT'])
 def modificar_item(device_id):
@@ -130,7 +127,7 @@ def modificar_item(device_id):
     
     return jsonify({"error": f"No se encontró el ítem con ID {device_id}"}), 404
 
-#FIXME: revisar
+#FIXME: dar uso
 # Endpoint para eliminar un ítem por su ID (o cualquier otro identificador)
 @app.route('/eliminar_item/<string:device_id>', methods=['DELETE'])
 def eliminar_item(device_id):
@@ -149,7 +146,6 @@ def eliminar_item(device_id):
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
 
-#OK: checkear
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
 def register_device():
@@ -187,7 +183,6 @@ def register_device():
         print("Dispositivo ya registrado")
         return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
 
-#OK:
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
@@ -195,7 +190,6 @@ def get_esp_list():
     #print(leer_items())
     return leer_items()
 
-#OK:?
 #ruta para recibir los "heartbeats"
 @app.route('/heartbeat', methods=['POST'])
 def heartbeat():
@@ -228,7 +222,6 @@ def heartbeat():
         print("Heartbeat no corresponde a un dispositivo registrado")
         return jsonify({"message": "Heartbeat no corresponde a un dispositivo registrado", "status": "Failed"}), 400
 
-#OK:
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():
@@ -285,9 +278,8 @@ def handle_disconnect():
 def launch_check_esp_list():
     check_esp_status()
     #socketio.emit('refresh_ESP_list')
-    return jsonify({})
+    return jsonify({}), 200
 
-#OK: 
 #funcion que checkea la conectividad de los ESP
 def check_esp_status():
     print("Verificando estado de todos los ESP...")
@@ -307,7 +299,6 @@ def check_esp_status():
     socketio.emit('refresh_ESP_list')
     print("Verificación terminada!")
 
-#OK:
 #funcion que envia una solicitud get para checkear conectividad
 def verify_esp(device):
     try:
