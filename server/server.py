@@ -149,7 +149,7 @@ def eliminar_item(device_id):
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
 
-#TODO: checkear
+#OK: checkear
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
 def register_device():
@@ -283,8 +283,8 @@ def handle_disconnect():
 
 @app.route('/checkESP', methods=['GET'])
 def launch_check_esp_list():
-    #check_esp_status()
-    socketio.emit('refresh_ESP_list')
+    check_esp_status()
+    #socketio.emit('refresh_ESP_list')
     return jsonify({})
 
 #OK: 
@@ -336,6 +336,8 @@ if __name__ == '__main__':
 
     try:
         # Iniciar la aplicación Flask
+        #FIXME: realiza el llamado de las funciones dos veces cuando esta activado el debug por el reloader
+        #--degub=false o use_reloader=False deberian solucionar el problema
         socketio.run(app, host='0.0.0.0', port=5000, debug=True)
     except (KeyboardInterrupt, SystemExit):
         # Apagar el cron job si la aplicación es cerrada
