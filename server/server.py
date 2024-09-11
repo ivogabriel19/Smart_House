@@ -160,7 +160,7 @@ def register_device():
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     
     # Verificar si el dispositivo ya está registrado en la lista
-    device_exists = any(device['ID'] == device_id for device in esp32_devices)
+    device_exists = any(device['ID'] == device_id for device in leer_items())
     
     if not device_exists:
         # Crear nuevo diccionario para el ESP
@@ -191,8 +191,8 @@ def register_device():
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
 def get_esp_list():
-    print("ESP registrados: ")
-    print(leer_items())
+    #print("ESP registrados: ")
+    #print(leer_items())
     return leer_items()
 
 #OK:?
@@ -220,7 +220,7 @@ def heartbeat():
         guardar_items(dispositivos)
 
         # Emitir un evento de actualización al frontend si es necesario
-        socketio.emit('refresh_ESP_list')
+        #socketio.emit('refresh_ESP_list')
 
         print(f"Heartbeat recibido desde {esp_id}")
         return jsonify({"message": "Heartbeat recibido", "status": "OK"}), 200
@@ -297,13 +297,14 @@ def check_esp_status():
         time_diff = time.time() - device['last_seen']
         if time_diff > CHECK_INTERVAL:
             device['status'] = 'Verificando'
-            socketio.emit('refresh_ESP_list')
+            # socketio.emit('refresh_ESP_list')
             #verify_esp(device)
             print(f"ESP32 {device['ID']} no ha enviado un heartbeat en los últimos 10 minutos. Enviando solicitud de verificación.")
             device['status'] = verify_esp(device)
             if device['status'] == 'Online': device['last_seen'] = time.time()
     # Guardar los cambios en el archivo después de la verificación
     guardar_items(dispositivos)
+    socketio.emit('refresh_ESP_list')
     print("Verificación terminada!")
 
 #OK:

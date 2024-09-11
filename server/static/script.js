@@ -127,7 +127,7 @@ function refresh_ESP_list(){
                 const listSpans = document.querySelectorAll('#esp-id-estado');
                 Array.from(listSpans).find(function(spanEstado) {
 
-                    if (spanEstado.parentElement.textContent == espId){
+                    if (spanEstado.parentElement.textContent == espInfo.ID){
                         spanEstado.classList.remove('conectado', 'verificando', 'desconectado', 'base')
     
                         console.log(espId + " status: " + espInfo.status );
