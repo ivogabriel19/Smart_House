@@ -116,16 +116,27 @@ header{
 }
 
 .delete-confirm{
-    margin: 2em;
+    width: 18em;
+    height: 4.5em;
+    border: none;
+    border-radius: 0.75em;
     padding: 0.5em;
     position: absolute;
+    translate: calc(50vw - 9em) calc(50vh - 2.25em);
+    /* display: none; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+
+    p{
+        margin-bottom: 0.3em;
+    }
 
     &::backdrop{
-        background-color: #222D;
+        background-color: #222E;
     }
 
     button{
-        padding: 0.25rem;
+        padding: 0.35rem;
         border: none;
         border-radius: 0.25rem;
         background-color: #DDD;

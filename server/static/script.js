@@ -51,6 +51,7 @@ function botones(){
         btn.addEventListener("click", () => {
             modal.showModal();
             esp_to_delete = btn.parentElement.textContent.slice(0, -1);
+            //document.querySelector("[data-modal]").style.display = flex;
         })
     });
 }
