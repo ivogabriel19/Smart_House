@@ -93,9 +93,10 @@ body{
 }
 
 .delete-confirm{
-    margin: 2em;
+    /* margin: 2em; */
     padding: 0.5em;
-    position: absolute;
+    /* position: absolute; */
+    translate: 50vh 50vw;
 
     &::backdrop{
         background-color: #222D;
