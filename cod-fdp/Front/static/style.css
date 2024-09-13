@@ -1,0 +1,284 @@
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: whitesmoke;
+
+    height: 100vh;
+    /* display: flex; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+    /* align-items: center; */
+    
+    h1{
+        margin-bottom: 10px;
+        color: #333;
+    }
+}
+
+section{
+    margin: 2em 1em;
+    padding: 1em;
+}
+
+header{
+    height: 7vh;
+    min-height: 50px;
+    background-color: #e0e0e0;
+    padding: 0.5em;
+
+    display: flex;
+
+    img{
+        background-color: whitesmoke;
+        border-radius: 0.5em;
+        padding: 0.2em;
+        height: 100%;
+        margin-right: 1em;
+    }
+
+    nav{
+        height: 100%;
+        width: 100%;
+
+        ul{
+            height: 100%;
+            display: flex;
+            align-items: center;
+
+            li{
+                text-decoration: none;
+                list-style-type: none;
+                background-color: whitesmoke;
+                padding: 0.5em;
+                margin: 0em 0.25em;
+                border-radius: 1em;
+                cursor: pointer;
+            }
+
+            li:hover{
+                font-weight: 600;
+            }
+        }
+    }
+}
+
+.cards-container{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1em;
+}
+
+.card{
+    color: white;
+    background-color: dimgray;
+    border-radius: 1.5rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, .4);
+    padding: 2vw 2vw;
+    /* width: 150px; */
+    /* max-width: 40vw; */
+    aspect-ratio: 16 / 9;
+    text-align: start;
+    position: relative;
+
+    p{
+        font-size: 1.5em;
+        font-weight: 600;
+        border-bottom: 2px solid white;
+        padding-bottom: 5px;
+
+        .estado {
+            margin-right: 30px;
+            width: 15px;
+            height: 15px;
+            border-radius: 50%;
+            display: inline-block;
+            position: relative;
+            top: -10px;
+            left: 8px;
+            /* box-shadow: 0px 0px 10px 2px navy; */
+            
+            animation-timing-function: ease-in;
+            animation-duration: .75s;
+            animation-iteration-count: infinite;
+            animation-direction: alternate;
+        }
+
+        .open-modal{
+            display: flex;
+            justify-content: center;
+            
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+    
+            background-color: gray;
+            border-radius: 50%;
+            height: 1rem;
+            width: 1rem;
+            font-size: 0.75rem;
+            
+            transition: 0.3s;
+            
+            &:hover{
+                background-color: red;
+                top: 0.5rem;
+                right: 0.5rem;
+                height: 1.5rem;
+                width: 1.5rem;
+                font-size: 1.25rem;
+            }
+        }
+    }
+
+    li{
+        margin: 10px 0;
+        list-style-type:none;
+    }
+
+    /* Círculo verde o rojo como superíndice */
+}
+
+.delete-confirm{
+    width: 18em;
+    height: 4.5em;
+    border: none;
+    border-radius: 0.75em;
+    padding: 0.5em;
+    position: absolute;
+    translate: calc(50vw - 9em) calc(50vh - 2.25em);
+    /* display: none; */
+    /* flex-direction: column; */
+    /* justify-content: center; */
+
+    p{
+        margin-bottom: 0.3em;
+    }
+
+    &::backdrop{
+        background-color: #222E;
+    }
+
+    button{
+        padding: 0.35rem;
+        border: none;
+        border-radius: 0.25rem;
+        background-color: #DDD;
+
+        transition: 0.1s;
+
+        &:hover{
+            font-weight: 800;
+        }
+    }
+
+    .confirm{
+        color: white;
+        background-color: red;
+    }
+}
+
+.base{
+    background-color: navy;
+    animation-name: latidoAzul;
+}
+
+@keyframes latidoAzul {
+    from    { box-shadow: 0px 0px 5px 0px blue; }
+    to      { box-shadow: 0px 0px 5px 2px blue; }
+}
+
+.conectado {
+    background-color: lime;
+    animation-name: latidoVerde;
+}
+
+@keyframes latidoVerde {
+    from    { box-shadow: 0px 0px 5px 0px lime; }
+    to      { box-shadow: 0px 0px 5px 2px lime; }
+}
+
+.verificando {
+    background-color: yellow;
+    animation-name: latidoAmarillo;
+}
+
+@keyframes latidoAmarillo {
+    from    { box-shadow: 0px 0px 5px 0px yellow; }
+    to      { box-shadow: 0px 0px 5px 2px yellow; }
+}
+
+.desconectado {
+    background-color: red;
+    animation-name: latidoRojo;
+}
+
+@keyframes latidoRojo {
+    from    { box-shadow: 0px 0px 5px 0px red; }
+    to      { box-shadow: 0px 0px 5px 2px red; }
+}
+
+.sensor-container {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+}
+
+.sensor-data p {
+    font-size: 1.5rem;
+    margin: 10px 0;
+}
+
+#temperature, #humidity {
+    font-weight: bold;
+    color: #333;
+}
+
+.ON-OFF_button {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    /* width: 400px; */
+}
+
+.ON-OFF_button h1 {
+    font-size: 24px;
+    margin-bottom: 20px;
+    color: #333;
+}
+
+.ON-OFF_button input[type="text"] {
+    width: 80%;
+    padding: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.ON-OFF_button button {
+    background-color: #333;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.ON-OFF_button button:hover {
+    background-color: #333;
+}
+
+.ON-OFF_button button:active {
+    background-color: #333;
+}
