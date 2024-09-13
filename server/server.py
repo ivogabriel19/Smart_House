@@ -317,6 +317,7 @@ def verify_esp(device):
 if __name__ == '__main__':
 #    app.run(host='0.0.0.0', port=5000)
 #    socketio.run(app, host='0.0.0.0', port=5000, debug=False)
+    #check_esp_status() #para iniciar mostrando el estado actual de los ESP
     scheduler = BackgroundScheduler()
 
     # Programa la tarea para ejecutarse cada 10 minutos
@@ -327,7 +328,7 @@ if __name__ == '__main__':
         # Iniciar la aplicación Flask
         #FIXME: realiza el llamado de las funciones dos veces cuando esta activado el debug por el reloader
         #--degub=false o use_reloader=False deberian solucionar el problema
-        socketio.run(app, host='0.0.0.0', port=5000, debug=True)
+        socketio.run(app, host='0.0.0.0', port=5000, debug=False)
     except (KeyboardInterrupt, SystemExit):
         # Apagar el cron job si la aplicación es cerrada
         scheduler.shutdown()
