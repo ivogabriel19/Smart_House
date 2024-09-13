@@ -2,32 +2,37 @@ const btnHome = document.getElementById("btnHome");
 const btnDevices = document.getElementById("btnDevices");
 const btnRooms = document.getElementById("btnRooms");
 const btnLights = document.getElementById("btnLights");
+const sctDevices = document.getElementById("esp-list-sct");
+const sctRooms =  document.getElementById("sensor-container-sct");
+const sctLigth =  document.getElementById("ON-OFF_button-cont");
 
 function mostrarTodos(){
-    btnHome.style.display = "block"
-    btnDevices.style.display = "block"
-    btnRooms.style.display = "block"
-    btnLights.style.display = "block"
+    sctDevices.style.display = "block";
+    sctRooms.style.display = "block";
+    sctLigth.style.display = "block";
 }
 
 function ocultarTodos(){
-    btnHome.style.display = "none"
-    btnDevices.style.display = "none"
-    btnRooms.style.display = "none"
-    btnLights.style.display = "none"
+    sctDevices.style.display = "none";
+    sctRooms.style.display = "none";
+    sctLigth.style.display = "none";
 }
+
+btnHome.addEventListener("click", ()=>{
+    mostrarTodos();
+})
 
 btnDevices.addEventListener("click", ()=>{
     ocultarTodos();
-    btnDevices.style.display = "block"
+    sctDevices.style.display = "block"
 })
 
 btnRooms.addEventListener("click", ()=>{
     ocultarTodos();
-    btnRooms.style.display = "block"
+    sctRooms.style.display = "block"
 })
 
 btnLights.addEventListener("click", ()=>{
     ocultarTodos();
-    btnLights.style.display = "block"
+    sctLigth.style.display = "block"
 })

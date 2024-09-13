@@ -12,8 +12,16 @@
 <body>
     <header>
         <img src="{{ url_for('static', filename='home-logo.png') }}" alt="logo">
+        <nav>
+            <ul>
+                <li id="btnHome">Home</li>
+                <li id="btnDevices">Devices</li>
+                <li id="btnRooms">Room Monitoring</li>
+                <li id="btnLights">Lighting</li>
+            </ul>
+        </nav>
     </header>
-    <section class="esp-list">
+    <section class="esp-list" id="esp-list-sct">
         <dialog data-modal class="delete-confirm">
             <p>¿Desea eliminar el dispositivo?</p>
             <button confirm-btn class="confirm">Confirm</button>
@@ -25,7 +33,7 @@
         </main>
     </section>
     
-    <section class="sensor-container">
+    <section class="sensor-container" id="sensor-container-sct">
         <h1>Datos del Sensor</h1>
         <main class="sensor-data">
             <p>Temperatura: <span id="temperature">Cargando...</span></p>
@@ -33,7 +41,7 @@
         </main>
     </section>
 
-    <section class="ON-OFF_button">
+    <section class="ON-OFF_button" id="ON-OFF_button-cont">
         <h1>Control de Botón ON-OFF</h1>
         <input type="text" id="ip_destino" placeholder="direccion ip del ESP">
         <button id="toggleButton" onclick="toggleButtonState()">OFF</button>

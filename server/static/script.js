@@ -1,12 +1,59 @@
 let buttonState = "OFF";
 let openBtns = document.querySelectorAll(".open-modal");
-let closeBtns = document.querySelectorAll(".close-modal");
-let modal = document.querySelector("[data-modal]");
-let confirmBtn = document.querySelector("[confirm-btn]");
+const closeBtns = document.querySelectorAll(".close-modal");
+const modal = document.querySelector("[data-modal]");
+const confirmBtn = document.querySelector("[confirm-btn]");
+const btnHome = document.getElementById("btnHome");
+const btnDevices = document.getElementById("btnDevices");
+const btnRooms = document.getElementById("btnRooms");
+const btnLights = document.getElementById("btnLights");
+const sctDevices = document.getElementById("esp-list-sct");
+const sctRooms =  document.getElementById("sensor-container-sct");
+const sctLigth =  document.getElementById("ON-OFF_button-cont");
 
 var esp_to_delete = "";
 // Conectar al servidor Flask a través de WebSockets
 const socket = io();
+
+function mostrarTodos(){
+    sctDevices.style.display = "block";
+    btnDevices.classList.remove('selected');
+    sctRooms.style.display = "block";
+    btnRooms.classList.remove('selected');
+    sctLigth.style.display = "block";
+    btnLights.classList.remove('selected');
+}
+
+function ocultarTodos(){
+    sctDevices.style.display = "none";
+    btnDevices.classList.remove('selected');
+    sctRooms.style.display = "none";
+    btnRooms.classList.remove('selected');
+    sctLigth.style.display = "none";
+    btnLights.classList.remove('selected');
+}
+
+btnHome.addEventListener("click", ()=>{
+    mostrarTodos();
+})
+
+btnDevices.addEventListener("click", ()=>{
+    ocultarTodos();
+    sctDevices.style.display = "block";
+    btnDevices.classList.add('selected');
+})
+
+btnRooms.addEventListener("click", ()=>{
+    ocultarTodos();
+    sctRooms.style.display = "block";
+    btnRooms.classList.add('selected');
+})
+
+btnLights.addEventListener("click", ()=>{
+    ocultarTodos();
+    sctLigth.style.display = "block";
+    btnLights.classList.add('selected');
+})
 
 closeBtns.forEach(btn => {
     btn.addEventListener("click", () => {
