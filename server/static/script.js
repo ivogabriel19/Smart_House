@@ -267,11 +267,15 @@ socket.on('connect', () => {
 
 // Evento para recibir mensajes del servidor
 socket.on('sensor_update', (data) => {
-    console.log('GET TyH c/sockets:', data);
-            
-    // Actualiza el contenido de los elementos del DOM
-    document.getElementById('temperature').innerText = data.temperatura;
-    document.getElementById('humidity').innerText = data.humedad;
+    const listSensorID = document.querySelectorAll('#sensor-id');
+    Array.from(listSensorID).find((h4) => {
+
+        if (h4.textContent == data.ID){
+            h4.parentElement.querySelector("#sensor-temp").innerHTML = data.data['temperatura'];
+            h4.parentElement.querySelector("#sensor-hum").innerHTML = data.data['humedad'];
+        }
+    });
+
 });
 
 function add_new_ESP(espInfo){

@@ -287,7 +287,7 @@ def update_TyH():
     actualizar_item(esp)
 
     # envia al front los datos recien recibidos
-    #socketio.emit('sensor_update', data)
+    socketio.emit('sensor_update', esp)
 
     print(f"Datos recibidos: Temperatura={temp} | Humedad={hum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
