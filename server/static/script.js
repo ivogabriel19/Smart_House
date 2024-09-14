@@ -181,8 +181,9 @@ function fetchESPList() {
         });
 }
 buttonState == "OFF";
-function toggleButtonState() {
+function toggleButtonState(btn) {
 
+    console.log(btn)
     // const listActuatorID = document.querySelectorAll('#actuator-id');
     // Array.from(listSensorID).find((h4) => {
 
@@ -192,28 +193,28 @@ function toggleButtonState() {
     //     }
     // });
 
-    // Cambia el estado del botón
-    buttonState = buttonState === "OFF" ? "ON" : "OFF";
-    esp_ip = document.getElementById('ip_destino').value;
-    document.getElementById('toggleButton').innerText = buttonState;
+    // // Cambia el estado del botón
+    // buttonState = buttonState === "OFF" ? "ON" : "OFF";
+    // esp_ip = document.getElementById('ip_destino').value;
+    // document.getElementById('toggleButton').innerText = buttonState;
 
-    // Envía el estado del botón al servidor Flask
-    fetch('/update_button', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({  state: buttonState , 
-                                destination_ip: esp_ip
-                            }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        console.log('Respuesta del servidor:', data);
-    })
-    .catch((error) => {
-        console.error('Error:', error);
-    });
+    // // Envía el estado del botón al servidor Flask
+    // fetch('/update_button', {
+    //     method: 'POST',
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //     },
+    //     body: JSON.stringify({  state: buttonState , 
+    //                             destination_ip: esp_ip
+    //                         }),
+    // })
+    // .then(response => response.json())
+    // .then(data => {
+    //     console.log('Respuesta del servidor:', data);
+    // })
+    // .catch((error) => {
+    //     console.error('Error:', error);
+    // });
 }
 
 // Función para simular la obtención de datos JSON desde el servidor
@@ -378,7 +379,9 @@ function add_actuator_card(espInfo){
     
     const btnItem = document.createElement('button');
     btnItem.id = `toggleButton`;
-    btnItem.onclick = "toggleButtonState()"
+    btnItem.onclick = function() {
+        toggleButtonState(this.parentElement.querySelector("#actuator-id").textContent);
+    };
     
     // Añade a la tarjeta la info correspondiente
     card.appendChild(idItem);
@@ -408,6 +411,6 @@ socket.on('disconnect', () => {
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = () => {
     fetchESPList();
-    refresh_ESP_list();
+    refresh_ESP_status();
     console.log("We are on live!");
 };
