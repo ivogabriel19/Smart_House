@@ -201,6 +201,8 @@ def register_device():
 
         if new_device["type"] == "Sensor":
             new_device["data"] = {"temperatura":"", "humedad":""}
+        if new_device["type"] == "Actuador":
+            new_device["data"] = {"switch":""}
         
         # Guardar nuevo ESP en memoria
         #esp32_devices.append(new_device)

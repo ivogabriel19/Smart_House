@@ -247,37 +247,32 @@ header{
 }
 
 .actuator-list{
-    .actuator-cards-container {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 10px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        text-align: center;
-        /* width: 400px; */
+    .actuator-cards-container{
+        display: flex;
+        gap: 0.5em;
+        .actuator-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            /* width: 400px; */
 
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
+            button {
+                background-color: #333;
+                color: white;
+                padding: 10px 20px;
+                border: none;
+                border-radius: 5px;
+                font-size: 16px;
+                cursor: pointer;
+                transition: background-color 0.25s ease;
 
-        button {
-            background-color: #333;
-            color: white;
-            padding: 10px 20px;
-            border: none;
-            border-radius: 5px;
-            font-size: 16px;
-            cursor: pointer;
-            transition: background-color 0.25s ease;
-
-            &:hover {
-                background-color: #CCC;
-                border: 2px solid #555;
-                color: #555;
+                &:hover {
+                    background-color: #CCC;
+                    border: 2px solid #555;
+                    color: #555;
+                }
             }
         }
     }

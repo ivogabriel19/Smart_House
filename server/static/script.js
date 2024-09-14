@@ -156,6 +156,9 @@ function fetchESPList() {
                     if (espInfo.type == "Sensor"){
                         add_sensor_card(espInfo);
                     }
+                    if (espInfo.type == "Actuador"){
+                        add_actuator_card(espInfo);
+                    }
                 }
             }
             // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
@@ -177,8 +180,18 @@ function fetchESPList() {
             console.error('Error fetching ESP list:', error);
         });
 }
-
+buttonState == "OFF";
 function toggleButtonState() {
+
+    // const listActuatorID = document.querySelectorAll('#actuator-id');
+    // Array.from(listSensorID).find((h4) => {
+
+    //     if (h4.textContent == data.ID){
+    //         h4.parentElement.querySelector("#sensor-temp").innerHTML = data.data['temperatura'];
+    //         h4.parentElement.querySelector("#sensor-hum").innerHTML = data.data['humedad'];
+    //     }
+    // });
+
     // Cambia el estado del botón
     buttonState = buttonState === "OFF" ? "ON" : "OFF";
     esp_ip = document.getElementById('ip_destino').value;
@@ -321,6 +334,9 @@ function add_new_ESP(espInfo){
     if (espInfo.type == "Sensor"){
         add_sensor_card(espInfo);
     }
+    if (espInfo.type == "Actuador"){
+        add_actuator_card(espInfo);
+    }
 }
 
 function add_sensor_card(espInfo){
@@ -340,11 +356,34 @@ function add_sensor_card(espInfo){
     const humItem = document.createElement('p');
     humItem.innerHTML = `<strong>Humedad:</strong> <span id="sensor-hum">${espInfo.data.humedad}</span>`;
     
-    
+    // Añade a la tarjeta la info correspondiente
     card.appendChild(idItem);
     card.appendChild(tempItem);
     card.appendChild(humItem);
     
+    // Añade la tarjeta al contenedor
+    container.appendChild(card);
+}
+
+function add_actuator_card(espInfo){
+    const container = document.querySelector('.actuator-cards-container');
+
+    // Crea una tarjeta para cada ESP
+    const card = document.createElement('div');
+    card.classList.add('actuator-card');
+
+    const idItem = document.createElement('h4');
+    idItem.innerHTML = `${espInfo.ID}`;
+    idItem.id = 'actuator-id';
+    
+    const btnItem = document.createElement('button');
+    btnItem.id = `toggleButton`;
+    btnItem.onclick = "toggleButtonState()"
+    
+    // Añade a la tarjeta la info correspondiente
+    card.appendChild(idItem);
+    card.appendChild(btnItem);
+
     // Añade la tarjeta al contenedor
     container.appendChild(card);
 }
