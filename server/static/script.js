@@ -109,7 +109,7 @@ function fetchESPList() {
         .then(response => response.json())
         .then(data => {
 
-            const container = document.querySelector('.cards-container');
+            const container = document.querySelector('.esp-cards-container');
             container.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
 
             for (const espId in data) {
@@ -273,7 +273,7 @@ socket.on('add_ESP_to_List', espInfo => {
     console.log("New ESP from server");
     //console.log(data);
 
-    const container = document.querySelector('.cards-container');
+    const container = document.querySelector('.esp-cards-container');
 
     // Crea una tarjeta para cada ESP
     const card = document.createElement('div');

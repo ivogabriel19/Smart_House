@@ -1,0 +1,19 @@
+@keyframes latidoAzul {
+    from    { box-shadow: 0px 0px 5px 0px blue; }
+    to      { box-shadow: 0px 0px 5px 2px blue; }
+}
+
+@keyframes latidoVerde {
+    from    { box-shadow: 0px 0px 5px 0px lime; }
+    to      { box-shadow: 0px 0px 5px 2px lime; }
+}
+
+@keyframes latidoAmarillo {
+    from    { box-shadow: 0px 0px 5px 0px yellow; }
+    to      { box-shadow: 0px 0px 5px 2px yellow; }
+}
+
+@keyframes latidoRojo {
+    from    { box-shadow: 0px 0px 5px 0px red; }
+    to      { box-shadow: 0px 0px 5px 2px red; }
+}

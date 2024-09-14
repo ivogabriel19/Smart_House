@@ -21,30 +21,33 @@
             </ul>
         </nav>
     </header>
+
     <section class="esp-list" id="esp-list-sct">
         <dialog data-modal class="delete-confirm">
             <p>¿Desea eliminar el dispositivo?</p>
             <button confirm-btn class="confirm">Confirm</button>
             <button data-close-modal class="close-modal">Cancel</button>
         </dialog>
-        <h1>Listado de ESP Conectados</h1>
-        <main class="cards-container" id="cards-container">
+        <h1 class="section-title">Listado de ESP Conectados</h1>
+        <main class="esp-cards-container" id="esp-cards-container">
             <!-- Aqui el js cargara dinamicamente las tarjetas de los ESP -->
         </main>
     </section>
     
-    <section class="sensor-container" id="sensor-container-sct">
-        <h1>Datos del Sensor</h1>
-        <main class="sensor-data">
+    <section class="sensor-list" id="sensor-container-sct">
+        <h1 class="section-title">Datos del Sensor</h1>
+        <main class="sensor-cards-container">
             <p>Temperatura: <span id="temperature">Cargando...</span></p>
             <p>Humedad: <span id="humidity">Cargando...</span></p>
         </main>
     </section>
 
-    <section class="ON-OFF_button" id="ON-OFF_button-cont">
-        <h1>Control de Botón ON-OFF</h1>
-        <input type="text" id="ip_destino" placeholder="direccion ip del ESP">
-        <button id="toggleButton" onclick="toggleButtonState()">OFF</button>
+    <section class="actuator-list" id="ON-OFF_button-cont">
+        <h1 class="section-title">Control de Botón ON-OFF</h1>
+        <main class="actuator-cards-container">
+            <input type="text" id="ip_destino" placeholder="direccion ip del ESP">
+            <button id="toggleButton" onclick="toggleButtonState()">OFF</button>
+        </main>
     </section>
 
     
