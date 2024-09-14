@@ -284,7 +284,6 @@ def update_TyH():
     esp = leer_item(esp_id)
     esp['data']['temperatura'] = temp
     esp['data']['humedad'] = hum
-    print("ESP: " + str(esp))
     actualizar_item(esp)
 
     # envia al front los datos recien recibidos
@@ -332,7 +331,7 @@ def check_esp_status():
             if device['status'] == 'Online': device['last_seen'] = time.time()
     # Guardar los cambios en el archivo después de la verificación
     guardar_items(dispositivos)
-    socketio.emit('refresh_ESP_list')
+    socketio.emit('refresh_ESP_status')
     print("Verificación terminada!")
 
 #funcion que envia una solicitud get para checkear conectividad

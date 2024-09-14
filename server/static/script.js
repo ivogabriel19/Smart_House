@@ -109,8 +109,11 @@ function fetchESPList() {
         .then(response => response.json())
         .then(data => {
 
-            const container = document.querySelector('.esp-cards-container');
-            container.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
+            const containerESP = document.querySelector('.esp-cards-container');
+            containerESP.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
+
+            const containerSensors = document.querySelector('.sensor-cards-container');
+            containerSensors.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
 
             for (const espId in data) {
                 if (data.hasOwnProperty(espId)) {
@@ -148,7 +151,11 @@ function fetchESPList() {
                     card.appendChild(list);
                     
                     // Añade la tarjeta al contenedor
-                    container.appendChild(card);
+                    containerESP.appendChild(card);
+
+                    if (espInfo.type == "Sensor"){
+                        add_sensor_card(espInfo);
+                    }
                 }
             }
             // Para cada objeto en el array, obtenemos la clave (nombre del ESP32)
@@ -217,8 +224,8 @@ function fetchSensorData() {
 }
 
 //FIXME: estructura
-function refresh_ESP_list(){
-    console.log("refreshing ESP List");
+function refresh_ESP_status(){
+    console.log("refreshing ESPs status");
     fetch('/api/esp/list')
     .then(response => response.json())
     .then(data => {
@@ -267,12 +274,7 @@ socket.on('sensor_update', (data) => {
     document.getElementById('humidity').innerText = data.humedad;
 });
 
-//FIXME: estructura
-//Evento para mostrar nuevos ESP que se conecten
-socket.on('add_ESP_to_List', espInfo => {
-    console.log("New ESP from server");
-    //console.log(data);
-
+function add_new_ESP(espInfo){
     const container = document.querySelector('.esp-cards-container');
 
     // Crea una tarjeta para cada ESP
@@ -311,11 +313,48 @@ socket.on('add_ESP_to_List', espInfo => {
 
     //aniade funcionalidad a los botones de la tarjeta
     botones();
+
+    if (espInfo.type == "Sensor"){
+        add_sensor_card(espInfo);
+    }
+}
+
+function add_sensor_card(espInfo){
+    const container = document.querySelector('.sensor-cards-container');
+
+    // Crea una tarjeta para cada ESP
+    const card = document.createElement('div');
+    card.classList.add('sensor-card');
+
+    const idItem = document.createElement('h4');
+    idItem.innerHTML = `${espInfo.ID}`;
+    idItem.id = 'sensor-id';
+    
+    const tempItem = document.createElement('p');
+    tempItem.innerHTML = `<strong>Temperatura:</strong> <span id="sensor-temp">${espInfo.data.temperatura}</span>`;
+    
+    const humItem = document.createElement('p');
+    humItem.innerHTML = `<strong>Humedad:</strong> <span id="sensor-hum">${espInfo.data.humedad}</span>`;
+    
+    
+    card.appendChild(idItem);
+    card.appendChild(tempItem);
+    card.appendChild(humItem);
+    
+    // Añade la tarjeta al contenedor
+    container.appendChild(card);
+}
+
+//FIXME: estructura
+//Evento para mostrar nuevos ESP que se conecten
+socket.on('add_ESP_to_List', espInfo => {
+    console.log("New ESP from server");
+    add_new_ESP(espInfo);
 });
 
 // Evento para manejar la desconexión
-socket.on('refresh_ESP_list', () => {
-    refresh_ESP_list();
+socket.on('refresh_ESP_status', () => {
+    refresh_ESP_status();
 });
 
 // Evento para manejar la desconexión
