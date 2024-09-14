@@ -222,21 +222,26 @@ header{
 }
 
 .sensor-list{
-    .sensor-cards-container {
-        background-color: #fff;
-        padding: 20px;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        text-align: center;
+    .sensor-cards-container{
+        display: flex;
+        gap: 0.5em;
+        
+        .sensor-card {
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            text-align: center;
 
-        p {
-            font-size: 1.5rem;
-            margin: 10px 0;
-        }
+            p {
+                font-size: 1.5rem;
+                margin: 10px 0;
+            }
 
-        #temperature, #humidity {
-            font-weight: bold;
-            color: #333;
+            #temperature, #humidity {
+                font-weight: bold;
+                color: #333;
+            }
         }
     }
 }

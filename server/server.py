@@ -14,7 +14,8 @@ esp32_devices = [
         #     "MAC" : "00:00:00:00:00:01",
         #     "status": "non-existent",
         #     "type": "fictional",
-        #     "last_seen" : time.time()
+        #     "last_seen" : time.time(),
+        #     "data" : {}
         # }
 ]
 
@@ -34,9 +35,6 @@ VERIFICATION_TIMEOUT = 10
 
 # Variables globales para valores de sensores
 button_state = "OFF"
-
-temp = 0.0
-hum = 0.0
 
 #WARNING: obsoleto
 # Función para cargar los ítems en memoria al iniciar la aplicación
@@ -58,17 +56,25 @@ def guardar_items_en_memoria():
         json.dump(esp32_devices, archivo, indent=4)
 
 # Función auxiliar para leer todos los ítems del archivo JSON
-def leer_items():
+def leer_items():   #OK.
     with open(RUTA_ARCHIVO_ITEMS, 'r') as archivo:
         return json.load(archivo)
 
+def leer_item(device_id):   #OK.
+    items = leer_items()
+    
+    # Buscar el ítem con el "device_id" especificado
+    for item in items:
+        if item.get('ID') == device_id:
+            return item
+
 # Función auxiliar para guardar todos los ítems en el archivo JSON
-def guardar_items(items):
+def guardar_items(items):   #OK.
     with open(RUTA_ARCHIVO_ITEMS, 'w') as archivo:
         json.dump(items, archivo, indent=4)
 
 #funcion auxiliar para agregar un item al json
-def guardar_item(item):
+def guardar_item(item):   #OK.
     nuevo_item = item
     
     if not nuevo_item:
@@ -80,6 +86,31 @@ def guardar_item(item):
     guardar_items(items)
     
     return jsonify({"message": "Ítem guardado exitosamente"}), 201
+
+def actualizar_item(item):
+    try:
+        # Cargar el archivo JSON existente
+        with open(RUTA_ARCHIVO_ITEMS, 'r') as file:
+            devices = json.load(file)
+        
+        # Buscar el dispositivo por su ID y actualizar los valores
+        for device in devices:
+            if device["ID"] == item["ID"]:
+                device.update(item)  # Actualiza los valores con el nuevo ítem
+                break
+        else:
+            # Si el dispositivo no existe, opcionalmente podrías agregarlo
+            print(f"Dispositivo con ID {item['ID']} no encontrado.")
+            return
+
+        # Guardar los cambios en el archivo JSON
+        with open(RUTA_ARCHIVO_ITEMS, 'w') as file:
+            json.dump(devices, file, indent=4)
+
+        print(f"Dispositivo con ID {item['ID']} actualizado correctamente.")
+    
+    except Exception as e:
+        print(f"Error al modificar el archivo JSON: {e}")
 
 #FIXME: dar uso
 # Endpoint para agregar un ítem nuevo al archivo JSON
@@ -97,7 +128,7 @@ def leer_items_endpoint():
 #FIXME: dar uso
 # Endpoint para leer un ítem específico por su "device_id"
 @app.route('/leer_item/<string:device_id>', methods=['GET'])
-def leer_item(device_id):
+def leer_item_endpoint(device_id):
     items = leer_items()
     
     # Buscar el ítem con el "device_id" especificado
@@ -164,8 +195,12 @@ def register_device():
             "MAC": device_mac,
             "status": "Online",
             "last_seen": time.time(),
-            "type": device_type
+            "type": device_type,
+            "data" : {}
         }
+
+        if new_device["type"] == "Sensor":
+            new_device["data"] = {"temperatura":"", "humedad":""}
         
         # Guardar nuevo ESP en memoria
         #esp32_devices.append(new_device)
@@ -241,18 +276,21 @@ def update_button():
 #ruta que recibe los valores de temperatura y humedad de un ESP
 @app.route('/post-TyH', methods=['POST'])
 def update_TyH():
-    global temp
-    global hum
     data = request.json  # Obtener los datos enviados desde el frontend
+    esp_id = data.get('id')
     temp = data.get('temperatura')
     hum = data.get('humedad')
-    datoTemp = temp
-    datoHum = hum
+
+    esp = leer_item(esp_id)
+    esp['data']['temperatura'] = temp
+    esp['data']['humedad'] = hum
+    print("ESP: " + str(esp))
+    actualizar_item(esp)
 
     # envia al front los datos recien recibidos
-    socketio.emit('sensor_update', data)
+    #socketio.emit('sensor_update', data)
 
-    print(f"Datos recibidos: Temperatura={datoTemp} | Humedad={datoHum}")
+    print(f"Datos recibidos: Temperatura={temp} | Humedad={hum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
 
 @app.route('/get-TyH', methods=['GET'])
