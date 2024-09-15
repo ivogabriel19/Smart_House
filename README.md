@@ -21,7 +21,7 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 - Visualizacion de datos por ambiente ⏳
 - Visualizacion de datos del control de acceso ⏳
 - Visualizacion de datos de consumo de dispositivos ⏳
-- Control para iluminacion del hogar ⏳
+- Control para iluminacion del hogar ✔
 - Control para controlar luces RGB ⏳
 - Control para controlar LEDs Neopixel ⏳
 - Visualizacion de datos de plantas ⏳
@@ -31,12 +31,12 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 - Recepcion de registro de ESPs ✔
 - Backgroun del sistema de "Heartbeat" de los ESPs ✔
 - Usuarios ⏳
-- Persistencia de informacion ⏳
+- Persistencia de informacion ✔
 - Respuesta a las solicitudes del Front ✔
 - Back para monitoreo de ambiente ⏳
 - Back para control de acceso ⏳
 - Back para monitoreo de consumo de dispositivos ⏳
-- Back para controlar iluminacion del hogar ⏳
+- Back para controlar iluminacion del hogar ✔
 - Back para controlar luces RGB ⏳
 - Back para controlar LEDs Neopixel ⏳
 - Back para monitorear plantas ⏳
@@ -45,11 +45,11 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 #### ESP
 - Registro en servidor central ✔
 - Envio de "heartbeats" ✔
-- Recibir datos desde el servidor ⏳
+- Recibir datos desde el servidor ✔
 - Codigo para monitoreo de ambiente (Luz, movimiento, temperatura, humedad, aire) ⏳
 - Codigo para control de acceso ⏳
 - Codigo para monitoreo de consumo de dispositivos ⏳
-- Codigo para controlar iluminacion del hogar ⏳
+- Codigo para controlar iluminacion del hogar ✔
 - Codigo para controlar luces RGB ⏳
 - Codigo para controlar LEDs Neopixel ⏳
 - Codigo para monitorear plantas (humedad, sol) ⏳
@@ -61,9 +61,13 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 ├── server/
 │   ├── app.py             # Código principal del servidor Flask
 │   ├── requirements.txt   # Dependencias del proyecto
+│   ├── aux_code/          # Scripts auxiliares para el desarrollo (simulacion de ESP)
+│   ├── data/              # Archivos dinamicos (Datos de los ESP)
 │   ├── static/            # Archivos estáticos (CSS, JS, imagenes)
 │   └── templates/         # Páginas del frontend
 │
+├── cod-fdp/               # Codigo fuera de producicon, para hacer pruebas de concepto
+├── docs/                  # Documentacion del proyecto
 ├── esp32_clients/         # Código para los distintos ESP32
 │
 └── README.md              # Documentación del proyecto
