@@ -31,6 +31,10 @@ section{
     margin-bottom: 20px;
 }
 
+h4{
+    margin-bottom: 0.5rem;
+}
+
 /* ########## Header ########## */
 header{
     height: 7vh;
