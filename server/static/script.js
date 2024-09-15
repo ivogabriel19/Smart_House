@@ -114,6 +114,9 @@ function fetchESPList() {
 
             const containerSensors = document.querySelector('.sensor-cards-container');
             containerSensors.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
+            
+            const containerActuators = document.querySelector('.actuator-cards-container');
+            containerActuators.innerHTML = ''; // Limpia el contenedor antes de añadir las nuevas tarjetas
 
             for (const espId in data) {
                 if (data.hasOwnProperty(espId)) {
@@ -180,41 +183,38 @@ function fetchESPList() {
             console.error('Error fetching ESP list:', error);
         });
 }
-buttonState == "OFF";
+
 function toggleButtonState(btn) {
 
+    button = btn;
+    buttonState = btn.textContent
+    button_esp_id = btn.parentElement.querySelector("#actuator-id").textContent
+    
     console.log(btn)
-    // const listActuatorID = document.querySelectorAll('#actuator-id');
-    // Array.from(listSensorID).find((h4) => {
 
-    //     if (h4.textContent == data.ID){
-    //         h4.parentElement.querySelector("#sensor-temp").innerHTML = data.data['temperatura'];
-    //         h4.parentElement.querySelector("#sensor-hum").innerHTML = data.data['humedad'];
-    //     }
-    // });
+    
+    // Envía el estado del botón al servidor Flask
+    fetch('/update_button', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({  state: buttonState , 
+                                esp_id: button_esp_id
+                            }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        console.log('Respuesta del servidor:', data);
+    })
+    .catch((error) => {
+        console.error('Error:', error);
+    });
 
-    // // Cambia el estado del botón
-    // buttonState = buttonState === "OFF" ? "ON" : "OFF";
-    // esp_ip = document.getElementById('ip_destino').value;
-    // document.getElementById('toggleButton').innerText = buttonState;
-
-    // // Envía el estado del botón al servidor Flask
-    // fetch('/update_button', {
-    //     method: 'POST',
-    //     headers: {
-    //         'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({  state: buttonState , 
-    //                             destination_ip: esp_ip
-    //                         }),
-    // })
-    // .then(response => response.json())
-    // .then(data => {
-    //     console.log('Respuesta del servidor:', data);
-    // })
-    // .catch((error) => {
-    //     console.error('Error:', error);
-    // });
+    // Cambia el estado del botón
+    buttonState = buttonState === "OFF" ? "ON" : "OFF";
+    //esp_ip = document.getElementById('ip_destino').value;
+    btn.textContent = buttonState; //cambio el estado del boton en el front
 }
 
 // Función para simular la obtención de datos JSON desde el servidor
@@ -292,7 +292,7 @@ socket.on('sensor_update', (data) => {
 
 });
 
-function add_new_ESP(espInfo){
+function add_new_ESP_card(espInfo){
     const container = document.querySelector('.esp-cards-container');
 
     // Crea una tarjeta para cada ESP
@@ -378,9 +378,10 @@ function add_actuator_card(espInfo){
     idItem.id = 'actuator-id';
     
     const btnItem = document.createElement('button');
+    btnItem.textContent = `${espInfo.data['switch']}`;
     btnItem.id = `toggleButton`;
     btnItem.onclick = function() {
-        toggleButtonState(this.parentElement.querySelector("#actuator-id").textContent);
+        toggleButtonState(this);
     };
     
     // Añade a la tarjeta la info correspondiente
@@ -395,7 +396,7 @@ function add_actuator_card(espInfo){
 //Evento para mostrar nuevos ESP que se conecten
 socket.on('add_ESP_to_List', espInfo => {
     console.log("New ESP from server");
-    add_new_ESP(espInfo);
+    add_new_ESP_card(espInfo);
 });
 
 // Evento para manejar la desconexión

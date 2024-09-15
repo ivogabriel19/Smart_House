@@ -202,7 +202,7 @@ def register_device():
         if new_device["type"] == "Sensor":
             new_device["data"] = {"temperatura":"", "humedad":""}
         if new_device["type"] == "Actuador":
-            new_device["data"] = {"switch":""}
+            new_device["data"] = {"switch":"OFF"}
         
         # Guardar nuevo ESP en memoria
         #esp32_devices.append(new_device)
@@ -260,12 +260,18 @@ def heartbeat():
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():
-    global button_state
     data = request.json  # Obtener los datos enviados desde el frontend
-    button_state = data.get('state', 'OFF')  # Obtener el estado del botón
-    esp_ip = data.get('destination_ip')
-    print(f"Estado del botón recibido: {button_state}")
-        # Enviar el estado del botón al ESP32
+    button_state = data.get('state')  # Obtener el estado del botón
+    esp_id = data.get('esp_id')
+    esp = leer_item(esp_id)
+    esp_ip = esp["IP"]
+    
+    print(f"Estado del botón recibido: {button_state} para el ESP {esp_id}")
+
+    esp["data"]["switch"] = button_state
+    actualizar_item(esp)
+
+    # Enviar el estado del botón al ESP32
     if button_state:
         try:
             response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
