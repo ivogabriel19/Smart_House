@@ -5,6 +5,8 @@
 #include <HTTPClient.h>
 
 #define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
+#define BUTTON_PIN 4  // Pin al que está conectado el botón físico
+#define DEBOUNCE_DELAY 50 // Retardo de "debounce" en milisegundos
 
 const char* ssid = "raspi";
 const char* password = "raspiraspi";
@@ -15,6 +17,9 @@ String esp_type = "Actuador";  // Identificador del tipo de tarea del ESP32
 int actuatorPin = 2;  // Pin al que está conectado el actuador (por ejemplo, un LED)
 
 WebServer server(80);
+bool actuatorState = false;  // Estado actual del actuador (LED)
+bool lastButtonState = LOW;  // Estado anterior del botón
+unsigned long lastDebounceTime = 0;  // Tiempo de último rebote
 
 // Función para manejar la solicitud POST y controlar el actuador
 void handleActuator() {
@@ -29,12 +34,12 @@ void handleActuator() {
 
         // Control del actuador basado en el estado recibido
         if (strcmp(state, "ON") == 0) {
-        // Activar el actuador
-        digitalWrite(actuatorPin, HIGH); // Suponiendo que el actuador está conectado al pin 5
+            actuatorState = true;
         } else if (strcmp(state, "OFF") == 0) {
-        // Desactivar el actuador
-        digitalWrite(actuatorPin, LOW);
+            actuatorState = false;
         }
+
+        digitalWrite(actuatorPin, actuatorState ? HIGH : LOW);
         
         server.send(200, "application/json", "{\"status\":\"success\"}");
     } else {
@@ -42,11 +47,54 @@ void handleActuator() {
     }
 }
 
+// Función para enviar el estado del actuador al servidor
+void send_state_to_server() {
+    if (WiFi.status() == WL_CONNECTED) {
+        HTTPClient http;
+        http.begin(String(serverName) + "/update");
+        http.addHeader("Content-Type", "application/json");
+
+        String postData = "{\"device_id\":\"" + device_id + "\", \"state\":\"" + (actuatorState ? "ON" : "OFF") + "\"}";
+        int httpResponseCode = http.POST(postData);
+
+        if (httpResponseCode > 0) {
+            String response = http.getString();
+            Serial.println(httpResponseCode);
+            Serial.println(response);
+        } else {
+            Serial.print("Error en la conexión: ");
+            Serial.println(httpResponseCode);
+        }
+        http.end();
+    }
+}
+
+
+void handleButtonPress() {
+    bool reading = digitalRead(BUTTON_PIN);
+
+    if (reading != lastButtonState) {
+        lastDebounceTime = millis();
+    }
+
+    if ((millis() - lastDebounceTime) > DEBOUNCE_DELAY) {
+        if (reading == LOW) {
+            actuatorState = !actuatorState;  // Cambiar el estado del actuador
+            digitalWrite(actuatorPin, actuatorState ? HIGH : LOW);
+            send_state_to_server();  // Enviar el nuevo estado al servidor
+        }
+    }
+
+    lastButtonState = reading;
+}
+
 void setup() {
     Serial.begin(115200);
     pinMode(actuatorPin, OUTPUT);
-    WiFi.begin(ssid, password);
+    pinMode(BUTTON_PIN, INPUT_PULLUP);
 
+
+    WiFi.begin(ssid, password);
     while (WiFi.status() != WL_CONNECTED) {
         delay(1000);
         Serial.println("Conectando a WiFi...");
@@ -65,6 +113,7 @@ void loop() {
     static unsigned long marca = 0;
 
     server.handleClient();
+    handleButtonPress();  // Verificar si el botón fue presionado
 
     if (millis() - marca > HEARTBEAT_FRECUENCY){
         marca = millis();
