@@ -190,9 +190,6 @@ function toggleButtonState(btn) {
     buttonState = btn.textContent
     button_esp_id = btn.parentElement.querySelector("#actuator-id").textContent
     
-    console.log(btn)
-
-    
     // Envía el estado del botón al servidor Flask
     fetch('/update_button', {
         method: 'POST',
@@ -210,6 +207,17 @@ function toggleButtonState(btn) {
     .catch((error) => {
         console.error('Error:', error);
     });
+
+    if (buttonState === "OFF"){
+        btn.textContent = "ON";
+        btn.classList.remove("statusOFF");
+        btn.classList.add("statusON")
+    } else if (buttonState === "ON"){
+        btn.textContent = "OFF";
+        btn.classList.remove("statusON");
+        btn.classList.add("statusOFF")
+    } 
+
 
     // Cambia el estado del botón
     buttonState = buttonState === "OFF" ? "ON" : "OFF";
@@ -378,8 +386,9 @@ function add_actuator_card(espInfo){
     idItem.id = 'actuator-id';
     
     const btnItem = document.createElement('button');
-    btnItem.textContent = `${espInfo.data['switch']}`;
+    btnItem.textContent = `${espInfo.data['switch']}`; //FIXME: escribe siempre Off como vlaor inicial
     btnItem.id = `toggleButton`;
+    btnItem.classList.add(espInfo.data['switch'] == "OFF" ? "statusOFF" : "statusON");
     btnItem.onclick = function() {
         toggleButtonState(this);
     };
