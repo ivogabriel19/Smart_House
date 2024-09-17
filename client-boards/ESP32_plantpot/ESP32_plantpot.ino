@@ -102,8 +102,8 @@ void postData()
         float soilTemp = soilTempSensor.getTempCByIndex(0);
 
         // Leer humedad y temperatura del aire (DHT22)
-        float airTemp = dht.readTemperature();
-        float airHumidity = dht.readHumidity();
+        float airTemp = sensor_DHT.readTemperature();
+        float airHumidity = sensor_DHT.readHumidity();
 
         // Check if any reads failed and exit early (to try again).
         if (isnan(airTemp) || isnan(airHumidity))
