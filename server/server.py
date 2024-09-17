@@ -230,6 +230,8 @@ def get_esp_list():
 def heartbeat():
     data = request.json
     esp_id = data.get('id')
+    esp_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
+    
 
     # Cargar la lista de dispositivos desde el archivo
     dispositivos = leer_items()
@@ -242,6 +244,8 @@ def heartbeat():
             device["last_seen"] = time.time()
             device["status"] = "Online"
             dispositivo_encontrado = True
+            if device["IP"] != esp_ip:
+                device["IP"] = esp_ip
             break
 
     if dispositivo_encontrado:
