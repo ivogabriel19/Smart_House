@@ -30,7 +30,8 @@ void setup() {
         delay(1000);
         Serial.println("Conectando a WiFi...");
     }
-    Serial.println("Conectado a la red WiFi");
+    Serial.print("Conectado a WiFi. Dirección IP: ");
+    Serial.println(WiFi.localIP());
 
     server.on("/status", handleStatus);
     server.begin();
