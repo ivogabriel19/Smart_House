@@ -1,5 +1,6 @@
 #include <WiFi.h>
 #include <HTTPClient.h>
+#include <WebServer.h>
 #include "DHT.h"
 
 #define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
@@ -16,6 +17,7 @@ String esp_type = "Sensor";  // Identificador del tipo de tarea del ESP32
 #define DHTTYPE DHT22   // DHT 22  (AM2302)
 
 DHT sensor_DHT(DHTPIN, DHTTYPE);
+WebServer server(80);
 
 void setup() {
     Serial.begin(115200);
@@ -30,21 +32,24 @@ void setup() {
     }
     Serial.println("Conectado a la red WiFi");
 
+    server.on("/status", handleStatus);
+    server.begin();
+
     register_in_server();
     send_heartbeat();
 }
 
 void loop() {
-    static unsigned long marcaHeartBeat = 0;
-    static unsigned long marcaTyH = 0;
+    static unsigned long lastHeartBeat = 0;
+    static unsigned long lastTyH = 0;
 
-    if (millis() - marcaHeartBeat > HEARTBEAT_FRECUENCY){
-        marcaHeartBeat = millis();
+    if (millis() - lastHeartBeat > HEARTBEAT_FRECUENCY){
+        lastHeartBeat = millis();
         send_heartbeat();
     }
 
-    if (millis() - marcaTyH > PUBLISH_FRECUENCY){
-        marcaTyH = millis();
+    if (millis() - lastTyH > PUBLISH_FRECUENCY){
+        lastTyH = millis();
         postTempHum();
     }
 }
@@ -89,7 +94,7 @@ void postTempHum(){
         request.addHeader("Content-Type", "application/json"); // Añade el tipo de contenido a la solicitud
 
         // Datos que quieres enviar (JSON)
-        String postData = "{\"temperatura\":\""+ String(t) +"\",\"humedad\": "+ String(h) +"}";
+        String postData = "{\"id\":\"" + device_id + "\", \"temperatura\":\""+ String(t) +"\",\"humedad\": "+ String(h) +"}";
 
         int httpCode = request.POST(postData); // Realiza la solicitud POST
 
@@ -126,4 +131,8 @@ void send_heartbeat(){
         
         http.end();
     }
+}
+
+void handleStatus() {
+    server.send(200, "text/plain", "ESP32 OK");
 }
