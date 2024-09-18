@@ -27,7 +27,7 @@
         "IP": "192.168.0.4",
         "MAC": "A4:E5:7C:03:7A:FC",
         "status": "Online",
-        "last_seen": 1726618620.0179014,
+        "last_seen": 1726618635.0202928,
         "type": "Actuador",
         "data": {
             "switch": "ON"
