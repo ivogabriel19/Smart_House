@@ -275,14 +275,16 @@ def update_button():
     esp["data"]["switch"] = button_state
     actualizar_item(esp)
 
-    # Enviar el estado del botón al ESP32
-    if request.remote_addr != esp_ip:
-        print("IP request: "+ str(request.remote_addr) +" IP esp: "+ str(esp_ip))
-        try:
-            response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
-            return jsonify({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
-        except requests.exceptions.RequestException as e:
-            return jsonify({'status': 'error', 'message': str(e)})
+    if button_state:
+        # Enviar el estado del botón al ESP32
+        if request.remote_addr != esp_ip:
+            print("IP request: "+ str(request.remote_addr) +" IP esp: "+ str(esp_ip))
+            try:
+                response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
+                return jsonify({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+            except requests.exceptions.RequestException as e:
+                return jsonify({'status': 'error', 'message': str(e)})
+        return jsonify({'status': 'success', 'message': 'Actualizado desde el ESP por el boton'})
     
     return jsonify({'status': 'error', 'message': 'Invalid state received'})
 
