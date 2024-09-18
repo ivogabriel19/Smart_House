@@ -276,7 +276,7 @@ def update_button():
     actualizar_item(esp)
 
     if button_state:
-        # Enviar el estado del botón al ESP32
+        # Enviar el estado del botón al ESP32 TODO: falta que si el POST viene del ESP se actualice el estado del boton en el front
         if request.remote_addr != esp_ip:
             print("IP request: "+ str(request.remote_addr) +" IP esp: "+ str(esp_ip))
             try:
