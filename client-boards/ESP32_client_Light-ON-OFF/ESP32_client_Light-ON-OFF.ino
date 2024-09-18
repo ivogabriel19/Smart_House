@@ -5,12 +5,12 @@
 #include <HTTPClient.h>
 
 #define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
-#define BUTTON_PIN 4  // Pin al que está conectado el botón físico
+#define BUTTON_PIN 15  // Pin al que está conectado el botón físico
 #define DEBOUNCE_DELAY 50 // Retardo de "debounce" en milisegundos
 
-const char* ssid = "raspi";
-const char* password = "raspiraspi";
-const char* serverName = "http://192.168.1.138:5000";  // Dirección IP del servidor
+const char* ssid = "Dejen dormir";
+const char* password = "0descensos";
+const char* serverName = "http://192.168.0.222:5000";  // Dirección IP del servidor
 
 String device_id = "ESP32_002";  // Identificador único para cada ESP32
 String esp_type = "Actuador";  // Identificador del tipo de tarea del ESP32
@@ -51,10 +51,10 @@ void handleActuator() {
 void send_state_to_server() {
     if (WiFi.status() == WL_CONNECTED) {
         HTTPClient http;
-        http.begin(String(serverName) + "/update");
+        http.begin(String(serverName) + "/update_button");
         http.addHeader("Content-Type", "application/json");
 
-        String postData = "{\"device_id\":\"" + device_id + "\", \"state\":\"" + (actuatorState ? "ON" : "OFF") + "\"}";
+        String postData = "{\"esp_id\":\"" + device_id + "\", \"state\":\"" + (actuatorState ? "ON" : "OFF") + "\"}";
         int httpResponseCode = http.POST(postData);
 
         if (httpResponseCode > 0) {
