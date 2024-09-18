@@ -276,7 +276,8 @@ def update_button():
     actualizar_item(esp)
 
     # Enviar el estado del botón al ESP32
-    if button_state:
+    if request.remote_addr != esp_ip:
+        print("IP request: "+ str(request.remote_addr) +" IP esp: "+ str(esp_ip))
         try:
             response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
             return jsonify({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
