@@ -223,7 +223,7 @@ def register_device():
 def get_esp_list():
     #print("ESP registrados: ")
     #print(leer_items())
-    return leer_items()
+    return jsonify(leer_items())
 
 #ruta para recibir los "heartbeats"
 @app.route('/heartbeat', methods=['POST'])
