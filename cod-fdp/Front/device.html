@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mi Proyecto Flask</title>
+    <!-- Incluir CSS -->
+    <link rel="stylesheet" href="./static/style.css">
+    <link rel="icon" type="image/x-icon" href="./static/home-ico.ico">
+    <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script defer src="./static/modal.js"></script>
+    <script defer src="./static/navigating.js"></script>
+</head>
+<body>
+    <header>
+        <img src="./static/home-logo.png" alt="logo">
+        <nav>
+            <ul>
+                <li id="btnHome">Home</li>
+            </ul>
+        </nav>
+    </header>
+    
+    <section class="cards">
+        <h1 class="section-title">Datos ESP</h1>
+        <main class="cards-container">
+            <div class="esp-card">
+                <p id="esp-id">Dummy_ESP<span class="estado" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span></p>
+                <ul>
+                    <li><strong>IP:</strong> <span id="esp-ip">0.0.0.1</span></li>
+                    <li><strong>MAC:</strong> <span id="esp-mac">00:00:00:00:00:01</span></li>
+                    <li><strong>Status:</strong> <span id="esp-status">non-existent</span></li>
+                </ul>
+            </div>
+            <div class="sensor-card">
+                <h4 id="sensor-id">Fake_Sensor_ESP</h4>
+                <p>
+                    <strong>Temperatura:</strong>
+                    <span id="sensor-temp">25</span>
+                </p>
+                <p>
+                    <strong>Humedad:</strong>
+                    <span id="sensor-hum">27</span>
+                </p>
+            </div>
+        </main>
+    </section>
+
+    <section class="eventos">
+        <h1 class="section-title">Eventos ESP</h1>
+        <main class="eventos-container"></main>
+    </section>
+
+    <section class="stats">
+        <h1 class="section-title">Estadisticas ESP</h1>
+        <main class="chart-container">
+            <div class="temperature-chart"></div>
+        </main>
+    </section>
+</body>
+</html>
