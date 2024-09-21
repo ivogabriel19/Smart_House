@@ -29,49 +29,48 @@
             <button confirm-btn class="confirm">Confirm</button>
             <button data-close-modal class="close-modal">Cancel</button>
         </dialog>
-        <h1>Listado de ESP Conectados</h1>
-        <main class="cards-container" id="cards-container">
-            <dialog data-modal class="delete-confirm">
-                <p>¿Desea eliminar el dispositivo?</p>
-                <button confirm-btn class="confirm">Confirm</button>
-                <button data-close-modal class="close-modal">Cancel</button>
-            </dialog>
+        <h1 class="section-title">Listado de ESP Conectados</h1>
+        <main class="esp-cards-container" id="esp-cards-container">
             <div class="card">
-                <p id="esp-id">Dummy_ESP<span class="estado" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span></p>
+                <p id="esp-id">ESP32_002
+                    <span class="estado desconectado" id="esp-id-estado"></span>
+                    <span data-open-modal="" class="open-modal">x</span>
+                </p>
                 <ul>
-                    <li><strong>IP:</strong> <span id="esp-ip">0.0.0.1</span></li>
-                    <li><strong>MAC:</strong> <span id="esp-mac">00:00:00:00:00:01</span></li>
-                    <li><strong>Status:</strong> <span id="esp-status">non-existent</span></li>
-                </ul>
-            </div>
-            <dialog data-modal class="delete-confirm">
-                <p>¿Desea eliminar el dispositivo?</p>
-                <button confirm-btn class="confirm">Confirm</button>
-                <button data-close-modal class="close-modal">Cancel</button>
-            </dialog>
-            <div class="card">
-                <p id="esp-id">Dummy_ESP<span class="estado" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span></p>
-                <ul>
-                    <li><strong>IP:</strong> <span id="esp-ip">0.0.0.1</span></li>
-                    <li><strong>MAC:</strong> <span id="esp-mac">00:00:00:00:00:01</span></li>
-                    <li><strong>Status:</strong> <span id="esp-status">non-existent</span></li>
+                    <li><strong>IP:</strong> <span id="esp-ip">192.168.0.7</span></li>
+                    <li><strong>MAC:</strong> <span id="esp-mac">C0:49:EF:65:2C:E4</span></li>
+                    <li><strong>Status:</strong> <span id="esp-status">Offline</span></li>
+                    <li><strong>Type:</strong> <span id="esp-type">Actuador</span></li>
                 </ul>
             </div>
         </main>
     </section>
     
-    <section class="sensor-container" id="sensor-container-sct">
-        <h1>Datos del Sensor</h1>
-        <main class="sensor-data">
-            <p>Temperatura: <span id="temperature">Cargando...</span></p>
-            <p>Humedad: <span id="humidity">Cargando...</span></p>
+    <section class="sensor-list" id="sensor-container-sct">
+        <h1 class="section-title">Datos del Sensor</h1>
+        <main class="sensor-cards-container">
+            <div class="sensor-card">
+                <h4 id="sensor-id">Fake_Sensor_ESP</h4>
+                <p>
+                    <strong>Temperatura:</strong>
+                    <span id="sensor-temp">25</span>
+                </p>
+                <p>
+                    <strong>Humedad:</strong>
+                    <span id="sensor-hum">27</span>
+                </p>
+            </div>
         </main>
     </section>
 
-    <section class="ON-OFF_button" id="ON-OFF_button-cont">
-        <h1>Control de Botón ON-OFF</h1>
-        <input type="text" id="ip_destino" placeholder="direccion ip del ESP">
-        <button id="toggleButton" onclick="toggleButtonState()">OFF</button>
+    <section class="actuator-list" id="ON-OFF_button-cont">
+        <h1 class="section-title">Control de Botón ON-OFF</h1>
+        <main class="actuator-cards-container">
+            <div class="actuator-card">
+                <h4 id="actuator-id">ESP32_002</h4>
+                <button id="toggleButton" class="statusON">ON</button>
+            </div>
+        </main>
     </section>
 
     
