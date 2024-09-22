@@ -109,7 +109,7 @@ function botones(){
             sessionStorage.setItem('selectedDeviceID', btn.textContent);
             
             // Redirigir a la página de detalles
-            window.location.href = "/details";
+            window.location.href = "/device";
         })
     });
 }

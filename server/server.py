@@ -175,8 +175,8 @@ def eliminar_item(device_id):
 def index():
     return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
 
-@app.route('/details')
-def details_page():
+@app.route('/device')
+def device_page():
     return render_template('device.html')
 
 #ruta para que se registren los ESP
