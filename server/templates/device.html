@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='home-ico.ico') }}">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
     <header>
@@ -34,7 +35,7 @@
     <section class="stats">
         <h1 class="section-title">Estadisticas ESP</h1>
         <main class="chart-container">
-            
+            <canvas id="historicoChart" width="400" height="200"></canvas>
         </main>
     </section>
     

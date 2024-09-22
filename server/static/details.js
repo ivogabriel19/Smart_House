@@ -85,4 +85,67 @@ function add_sensor_card(esp){
     container.appendChild(card);
 }
 
-window.onload = getEsp();
+// Función para obtener los datos históricos del backend Flask
+async function fetchHistoricalData(deviceId) {
+    const response = await fetch(`/historico/${deviceId}`);
+    const data = await response.json();
+    return data;
+}
+
+// Función para renderizar el gráfico
+async function renderChart() {
+    const deviceId = device_id;  // El ID del dispositivo
+    const historicalData = await fetchHistoricalData(deviceId);
+
+    // Extraer los datos necesarios para el gráfico
+    const timestamps = historicalData.map(entry => entry.timestamp);
+    const temperatures = historicalData.map(entry => entry.temperatura);
+    const humidity = historicalData.map(entry => entry.humedad);
+
+    const ctx = document.getElementById('historicoChart').getContext('2d');
+    const historicoChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: timestamps,
+            datasets: [
+                {
+                    label: 'Temperatura (°C)',
+                    data: temperatures,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true
+                },
+                {
+                    label: 'Humedad (%)',
+                    data: humidity,
+                    borderColor: 'rgba(153, 102, 255, 1)',
+                    backgroundColor: 'rgba(153, 102, 255, 0.2)',
+                    fill: true
+                }
+            ]
+        },
+        options: {
+            scales: {
+                x: {
+                    title: {
+                        display: true,
+                        text: 'Timestamps'
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'Mediciones'
+                    },
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+}
+
+// Llamar a la función para obtener la lista de ESP al cargar la página
+window.onload = () => {
+    getEsp();
+    renderChart();
+};

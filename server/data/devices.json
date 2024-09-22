@@ -38,11 +38,11 @@
         "IP": "192.168.0.23",
         "MAC": "08:D1:F9:34:74:0C",
         "status": "Online",
-        "last_seen": 1727033452.880405,
+        "last_seen": 1727033902.8000472,
         "type": "Sensor",
         "data": {
-            "temperatura": "23.50",
-            "humedad": 87.5
+            "temperatura": "23.60",
+            "humedad": 86.9
         }
     }
 ]

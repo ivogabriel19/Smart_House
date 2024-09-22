@@ -134,6 +134,15 @@ def guardar_historico_sensor(device_id, data):
 
     print(f"Datos guardados para {device_id}: {nuevo_registro}")
 
+@app.route('/historico/<device_id>', methods=['GET'])
+def get_historico(device_id):
+    try:
+        with open(f'./data/{device_id}_historico.json', 'r') as file:
+            historico = json.load(file)
+        return jsonify(historico)
+    except FileNotFoundError:
+        return jsonify({"error": "No data found for this device"}), 404
+
 #FIXME: dar uso
 # Endpoint para agregar un ítem nuevo al archivo JSON
 @app.route('/guardar_item', methods=['POST'])
