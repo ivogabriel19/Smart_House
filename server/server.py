@@ -1,6 +1,7 @@
 from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO, send, emit
 from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
 import requests, time, json, os
 
 app = Flask(__name__)
@@ -112,6 +113,27 @@ def actualizar_item(item):
     except Exception as e:
         print(f"Error al modificar el archivo JSON: {e}")
 
+def guardar_historico_sensor(device_id, data):
+    file_name = f"./data/{device_id}_historico.json"
+    nuevo_registro = {
+        "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+        "temperatura": data.get('temperatura'),
+        "humedad": data.get('humedad')
+    }
+    
+    try:
+        with open(file_name, 'r') as file:
+            historico = json.load(file)
+    except FileNotFoundError:
+        historico = []
+
+    historico.append(nuevo_registro)
+    
+    with open(file_name, 'w') as file:
+        json.dump(historico, file, indent=4)
+
+    print(f"Datos guardados para {device_id}: {nuevo_registro}")
+
 #FIXME: dar uso
 # Endpoint para agregar un ítem nuevo al archivo JSON
 @app.route('/guardar_item', methods=['POST'])
@@ -216,11 +238,31 @@ def register_device():
         
         # Enviar datos al front
         socketio.emit('add_ESP_to_List', new_device)
+
+        # Crear archivo histórico para este dispositivo
+        create_historic_file(device_id)
         
         return jsonify({"status": "success", "message": "Dispositivo registrado"}), 200
     else:
         print("Dispositivo ya registrado")
         return jsonify({"status": "error", "message": "ID de dispositivo ya registrado"}), 400
+
+# Función para crear el archivo histórico
+def create_historic_file(device_id):
+    # Verificar que la carpeta "data" exista, si no, crearla
+    if not os.path.exists('data'):
+        os.makedirs('data')
+    
+    # Ruta del archivo histórico para este dispositivo
+    file_path = os.path.join('data', f"{device_id}_historico.json")
+    
+    # Si el archivo no existe, crearlo con un array vacío
+    if not os.path.exists(file_path):
+        with open(file_path, 'w') as f:
+            json.dump([], f, indent=4)  # Guarda un array vacío para empezar a registrar el historial
+        print(f"Archivo histórico creado para {device_id}")
+    else:
+        print(f"Archivo histórico ya existe para {device_id}")
 
 #ruta para devolver el listado harcodeado de ESPs
 @app.route('/api/esp/list', methods=['GET'])
@@ -307,6 +349,8 @@ def update_TyH():
 
     # envia al front los datos recien recibidos
     socketio.emit('sensor_update', esp)
+
+    guardar_historico_sensor(esp_id, esp['data'])
 
     print(f"Datos recibidos: Temperatura={temp} | Humedad={hum}")
     return jsonify({"message": "Temperatura y Humedad actualizadas"}), 200
