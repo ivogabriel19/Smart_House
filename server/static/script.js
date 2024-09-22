@@ -92,6 +92,7 @@ confirmBtn.addEventListener("click", () =>{
 //esta funcion es porque los botones para abrir el modal se van generando dinamicamente
 function botones(){
     openBtns = document.querySelectorAll(".open-modal");
+    nameBtns = document.querySelectorAll("#esp-name");
 
     //Botones que manejan la eliminacion de uns ESP de la lista
     openBtns.forEach(btn => {
@@ -99,6 +100,16 @@ function botones(){
             modal.showModal();
             esp_to_delete = btn.parentElement.textContent.slice(0, -1);
             //document.querySelector("[data-modal]").style.display = flex;
+        })
+    });
+    //Botones para redirigirse a la pagina con detalles del ESP
+    nameBtns.forEach(btn => {
+        btn.addEventListener("click", () => {
+            // Guardar el device_id en el sessionStorage
+            sessionStorage.setItem('selectedDeviceID', btn.textContent);
+            
+            // Redirigir a la página de detalles
+            window.location.href = "/details";
         })
     });
 }
@@ -125,10 +136,10 @@ function fetchESPList() {
         
                     // Crea una tarjeta para cada ESP
                     const card = document.createElement('div');
-                    card.classList.add('card');
+                    card.classList.add('esp-card');
         
                     const idElement = document.createElement('p');
-                    idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span>`;
+                    idElement.innerHTML = `<span id="esp-name">${espInfo.ID}</span><span class="estado base" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span>`;
                     idElement.id = 'esp-id';
                     
                     const list = document.createElement('ul');
