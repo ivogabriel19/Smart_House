@@ -133,7 +133,7 @@ def leer_item_endpoint(device_id):
     
     # Buscar el ítem con el "device_id" especificado
     for item in items:
-        if item.get('device_id') == device_id:
+        if item.get('ID') == device_id:
             return jsonify(item), 200
     
     # Si no se encuentra el ítem
