@@ -316,7 +316,7 @@ function add_new_ESP_card(espInfo){
 
     // Crea una tarjeta para cada ESP
     const card = document.createElement('div');
-    card.classList.add('card');
+    card.classList.add('esp-card');
 
     const idElement = document.createElement('p');
     idElement.innerHTML = `${espInfo.ID}<span class="estado base" id="esp-id-estado"></span><span data-open-modal class="open-modal">x</span>`;
