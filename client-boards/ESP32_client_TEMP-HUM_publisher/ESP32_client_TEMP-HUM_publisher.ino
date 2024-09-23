@@ -4,13 +4,13 @@
 #include "DHT.h"
 
 #define HEARTBEAT_FRECUENCY 15000 // 15000ms = 3min - 120.000ms = 2min
-#define PUBLISH_FRECUENCY 30000 
+#define PUBLISH_FRECUENCY 900000  // 900.000ms = 15min
 
-const char* ssid = "raspi";
-const char* password = "raspiraspi";
-const char* serverName = "http://192.168.1.138:5000";  // Dirección IP del servidor
+const char* ssid = "Dejen dormir";
+const char* password = "0descensos";
+const char* serverName = "http://192.168.0.222:5000";  // Dirección IP del servidor
 
-String device_id = "ESP32_003";  // Identificador único para cada ESP32
+String device_id = "ESP32_SensorTemp";  // Identificador único para cada ESP32
 String esp_type = "Sensor";  // Identificador del tipo de tarea del ESP32
 
 #define DHTPIN 15     // Digital pin connected to the DHT sensor
