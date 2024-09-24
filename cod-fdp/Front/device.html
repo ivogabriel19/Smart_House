@@ -8,8 +8,9 @@
     <link rel="stylesheet" href="./static/style.css">
     <link rel="icon" type="image/x-icon" href="./static/home-ico.ico">
     <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
-    <script defer src="./static/modal.js"></script>
-    <script defer src="./static/navigating.js"></script>
+    <!-- <script defer src="./static/modal.js"></script> -->
+    <!-- <script defer src="./static/navigating.js"></script> -->
+    <script defer src="./static/device.js"></script>
 </head>
 <body>
     <header>
@@ -48,7 +49,37 @@
 
     <section class="eventos">
         <h1 class="section-title">Eventos ESP</h1>
-        <main class="eventos-container"></main>
+        <dialog data-modal class="add-event">
+
+            <div class="form-container">
+                <h2>Asignar Evento al ESP</h2>
+                <form method="dialog" id="event-form">
+
+                    <div class="form-group">
+                        <label for="event-type">Tipo de Evento</label>
+                        <select id="event-type">
+                            <option value="horario">Horario Específico</option>
+                            <option value="fecha">Fecha Específica</option>
+                            <option value="intervalo">Intervalo de Tiempo</option>
+                        </select>
+                    </div>
+                    <div class="options">
+                        <div class="form-group">
+                            <label for="time">Hora (hh:mm)</label>
+                            <input type="time" id="time">
+                        </div>
+                    </div>
+                    <button confirm-btn type="submit" class="confirm">Confirm</button>
+                    <button data-close-modal class="close-modal">Cancel</button>
+                </form>
+            </div>
+            
+        </dialog>
+        <main class="eventos-container">
+            <div class="add-event-btn" id="add-event-btn">
+                <span>+</span>añadir Evento
+            </div>
+        </main>
     </section>
 
     <section class="stats">

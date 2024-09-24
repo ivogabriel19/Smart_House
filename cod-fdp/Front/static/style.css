@@ -303,6 +303,73 @@ header{
     }
 }
 
+.eventos-container{
+
+    flex-direction: row-reverse;
+
+    .add-event-btn{
+        max-width: 33%;
+        background-color: #fff;
+        padding: 10px;
+        border-radius: 8px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        text-align: center;
+    }
+}
+
+.add-event{
+    width: 20em;
+    /* height: 30em; */
+    max-height: 80vh;
+    border: none;
+    border-radius: 0.75em;
+    padding: 0.5em;
+    position: absolute;
+    translate: calc(50vw - 10em) calc(50vh - 15em);
+
+    .form-container{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+
+        margin-bottom: 10px;
+
+        #event-form{
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+    }
+
+    input, select {
+        width: 100%;
+        padding: 8px;
+    }
+
+    &::backdrop{
+        background-color: #222E;
+    }
+
+    button{
+        padding: 0.35rem;
+        border: none;
+        cursor: pointer;
+        border-radius: 0.25rem;
+        /* background-color: #DDD; */
+
+        transition: 0.1s;
+
+        &:hover{
+            font-weight: 800;
+        }
+    }
+
+    .confirm{
+        color: white;
+        background-color: dodgerblue;
+    }
+}
+
 .stats{
 
     .temperature-chart{
