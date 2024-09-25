@@ -22,17 +22,7 @@ closeBtn.addEventListener("click", () => {
     event_modal.close();
 })
 
-// confirmBtn.addEventListener("click", (i) =>{
-//     //fetch para agregar evento
-//     console.log(i);
-//     event_modal.close();
-// });
-
-// Event Listener para el formulario
-form.addEventListener('submit', function(event) {
-    // Evitar que el formulario se envíe automáticamente
-    event.preventDefault();
-
+confirmBtn.addEventListener("click", (i) =>{
     // Obtener los valores de los campos
     const eventType = document.getElementById('event-type').value;
 
@@ -53,6 +43,32 @@ form.addEventListener('submit', function(event) {
     console.log(eventData);
     event_modal.close();
 });
+
+// Event Listener para el formulario
+// form.addEventListener('submit', function(event) {
+//     // Evitar que el formulario se envíe automáticamente
+//     event.preventDefault();
+
+//     // Obtener los valores de los campos
+//     const eventType = document.getElementById('event-type').value;
+
+//     // Obtener los valores según el tipo de evento
+//     if (eventType === 'horario') {
+//         const time = document.getElementById('time').value;
+//         eventData = { eventType, time };
+//     } else if (eventType === 'fecha') {
+//         const date = document.getElementById('date').value;
+//         const time = document.getElementById('time').value;
+//         eventData = { eventType, date, time };
+//     } else if (eventType === 'intervalo') {
+//         const interval = document.getElementById('interval').value;
+//         eventData = { eventType, interval };
+//     }
+
+//     //TODO fetchCrearEvento(esp_id, eventData)
+//     console.log(eventData);
+//     event_modal.close();
+// });
 
 typeSelect.addEventListener("change", () => {
     // Obtener el valor de la opción seleccionada
