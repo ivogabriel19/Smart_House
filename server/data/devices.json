@@ -9,7 +9,8 @@
         "data": {
             "temperatura": "25",
             "humedad": "27"
-        }
+        },
+        "events": []
     },
     {
         "ID": "ESP32_002",
@@ -20,7 +21,27 @@
         "type": "Actuador",
         "data": {
             "switch": "OFF"
-        }
+        },
+        "events": [
+            {
+                "job_id": "evento_ESP32_002_intervalo",
+                "event_type": "intervalo",
+                "event_data": {
+                    "eventType": "intervalo",
+                    "interval": "5"
+                },
+                "event_action": "activar"
+            },
+            {
+                "job_id": "evento_ESP32_002_horario",
+                "event_type": "horario",
+                "event_data": {
+                    "eventType": "horario",
+                    "time": "18:00"
+                },
+                "event_action": "activar"
+            }
+        ]
     },
     {
         "ID": "ESP01",
@@ -30,8 +51,9 @@
         "last_seen": 1726618635.0202928,
         "type": "Actuador",
         "data": {
-            "switch": "ON"
-        }
+            "switch": "OFF"
+        },
+        "events": []
     },
     {
         "ID": "ESP32_003",
@@ -43,6 +65,7 @@
         "data": {
             "temperatura": "23.60",
             "humedad": 86.9
-        }
+        },
+        "events": []
     }
 ]

@@ -1,6 +1,9 @@
 from flask import Flask, request, jsonify, render_template
 from flask_socketio import SocketIO, send, emit
 from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.date import DateTrigger
+from apscheduler.triggers.interval import IntervalTrigger
+from apscheduler.triggers.cron import CronTrigger
 from datetime import datetime
 import requests, time, json, os
 
@@ -29,8 +32,8 @@ if not os.path.exists(RUTA_ARCHIVO_ITEMS):
     with open(RUTA_ARCHIVO_ITEMS, 'w') as file:
         json.dump([], file)  # Guardamos una lista vacía en el archivo json
 
-# Intervalo de verificación en segundos (10 minutos)
-CHECK_INTERVAL = 60 # 1 minutos
+# Intervalo de verificación en segundos (15 minutos)
+CHECK_INTERVAL = 900 # 15 minutos
 # Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
 VERIFICATION_TIMEOUT = 10  
 
@@ -231,7 +234,8 @@ def register_device():
             "status": "Online",
             "last_seen": time.time(),
             "type": device_type,
-            "data" : {}
+            "data" : {},
+            "events" : []
         }
 
         if new_device["type"] == "Sensor":
@@ -316,6 +320,11 @@ def heartbeat():
         print("Heartbeat no corresponde a un dispositivo registrado")
         return jsonify({"message": "Heartbeat no corresponde a un dispositivo registrado", "status": "Failed"}), 400
 
+def add_event_to_esp(esp_id, data):
+    esp = leer_item(esp_id)
+    esp["events"].append(data)
+    actualizar_item(esp)
+
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():
@@ -369,6 +378,54 @@ def send_TyH():
     global temp
     global hum
     return jsonify({"temperatura": str(temp) + "º", "humedad": str(hum) + "%"}), 200
+
+@app.route('/get-events', methods=['GET'])
+def get_events():
+    scheduler.print_jobs()
+    return jsonify({"jobs":str(scheduler.get_jobs())}), 200
+
+@app.route('/schedule-event', methods=['POST'])
+def schedule_event():
+    data = request.json
+    esp_id = data.get('esp_id')
+    event_action = data.get('eventAction')
+    event_type = data.get('eventType')
+    event_data = data.get('eventData')
+
+    if event_type == 'horario':
+        time = event_data.get('time')
+        # Programar el evento en un horario específico
+        trigger = CronTrigger(hour=int(time.split(':')[0]), minute=int(time.split(':')[1]))
+    elif event_type == 'fecha':
+        time = event_data.get('time')
+        date = event_data.get('date')
+        # Programar el evento en una fecha específica
+        trigger = DateTrigger(run_date=f"{date} {time}")
+    elif event_type == 'intervalo':
+        interval = event_data.get('interval')
+        # Programar un evento repetitivo en intervalos
+        trigger = IntervalTrigger(minutes=int(interval))
+    
+    # Función que se ejecutará al disparar el evento
+    def ejecutar_evento():
+        print(f"===> Ejecutando evento para {esp_id}, {event_action}")
+        # Aquí puedes definir la lógica para enviar comandos al ESP
+
+    # Agregar el evento al scheduler
+    job_id = f"evento_{esp_id}_{event_type}"
+    scheduler.add_job(func=ejecutar_evento, trigger=trigger, id=job_id, replace_existing=True)
+    print(f"Evento {job_id} creado para {event_data}")
+    
+    data = {
+        "job_id" : job_id,
+        "event_type" : event_type,
+        "event_data" : event_data,
+        "event_action" : event_action
+    }
+
+    add_event_to_esp(esp_id, data);
+
+    return jsonify({"status": "success", "message": f"Evento para {esp_id} programado exitosamente."}), 200
 
 # Evento para conexión
 @socketio.on('connect')

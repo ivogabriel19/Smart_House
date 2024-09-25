@@ -1,5 +1,15 @@
 const device_id = sessionStorage.getItem('selectedDeviceID');
+let device_data = {};
 const homeBtn = document.getElementById("btnHome");
+const addEventBtn = document.getElementById("add-event-btn");
+const event_modal = document.querySelector("[data-modal]");
+const confirmBtn = document.querySelector("[confirm-btn]");
+const closeBtn = document.querySelector(".close-modal");
+const espSelect = document.getElementById("esp-id-select");
+const typeSelect = document.getElementById("event-type");
+const actionSelect = document.getElementById('event-action');
+const optionsContainer = document.querySelector(".options");
+const form = document.getElementById("event-form");
 
 homeBtn.addEventListener("click", () => {
     window.location.href = "/";
@@ -9,8 +19,11 @@ function getEsp(){
     fetch('/leer_item/'+device_id)
         .then(response => response.json())
         .then(data => {
+            device_data = data;
             add_ESP_card(data);
-            add_sensor_card(data);
+            if (data.type == "Sensor"){
+                add_sensor_card(data);
+            }
         })
         .catch(error => {
             console.error('Error fetching ESP list:', error);
@@ -84,6 +97,94 @@ function add_sensor_card(esp){
     // Añade la tarjeta al contenedor
     container.appendChild(card);
 }
+
+addEventBtn.addEventListener("click", () => {
+    event_modal.showModal();
+    //console.log("open!");
+    const op = document.createElement('option');
+    op.innerHTML = `<option value=${device_id}>${device_id}</option>`;
+    espSelect.appendChild(op);
+    espSelect.value = device_id;
+    espSelect.disabled = true;
+
+    if (device_data.type == "Actuador"){
+        actionSelect.innerHTML += `<option value="activar">Activar actuador</option>
+                                    <option value="desactivar">Desactivar Actuador</option>`;
+    }
+})
+
+closeBtn.addEventListener("click", () => {
+    event_modal.close();
+})
+
+confirmBtn.addEventListener("click", (i) =>{
+    // Obtener los valores de los campos
+    const eventType = document.getElementById('event-type').value;
+    const eventAction = document.getElementById('event-action').value;
+
+    // Obtener los valores según el tipo de evento
+    if (eventType === 'horario') {
+        const time = document.getElementById('time').value;
+        eventData = { eventType, time };
+    } else if (eventType === 'fecha') {
+        const date = document.getElementById('date').value;
+        const time = document.getElementById('time').value;
+        eventData = { eventType, date, time };
+    } else if (eventType === 'intervalo') {
+        const interval = document.getElementById('interval').value;
+        eventData = { eventType, interval };
+    }
+
+    fetch("/schedule-event", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({  'esp_id': device_id ,
+                                'eventAction': eventAction , 
+                                'eventType': eventType , 
+                                'eventData': eventData
+                            }),
+    })
+    .then(response => response.json())
+    .then(data => {
+        //alert(data.message);
+    });
+    console.log(eventData);
+    event_modal.close();
+});
+
+typeSelect.addEventListener("change", () => {
+    // Obtener el valor de la opción seleccionada
+    const selectedOption = typeSelect.value;
+    // console.log(selectedOption);
+
+    const div = document.createElement('div');
+    div.classList.add('form-group');
+    
+    optionsContainer.innerHTML = ``;
+    if( selectedOption=="horario" ){
+        div.innerHTML = `
+                        <label for="time">Hora (hh:mm)</label>
+                        <input type="time" id="time">
+        `;
+    } else if ( selectedOption=="fecha" ){
+        div.innerHTML = `
+                        <label for="date">Fecha</label>
+                        <input type="date" id="date">
+                        <label for="time">Hora (hh:mm)</label>
+                        <input type="time" id="time">
+        `;        
+    } else if ( selectedOption=="intervalo" ){
+        div.innerHTML = `
+                        <label for="interval">Intervalo de Tiempo (minutos)</label>
+                        <input type="number" id="interval">
+        `;        
+    }
+
+    optionsContainer.appendChild(div);
+
+});
 
 // Función para obtener los datos históricos del backend Flask
 async function fetchHistoricalData(deviceId) {
