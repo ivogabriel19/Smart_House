@@ -382,7 +382,94 @@ def send_TyH():
 @app.route('/get-events', methods=['GET'])
 def get_events():
     scheduler.print_jobs()
-    return jsonify({"jobs":str(scheduler.get_jobs())}), 200
+    return jsonify({"size:" : str(len(scheduler.get_jobs())),
+                    "jobs":str(scheduler.get_jobs())}), 200
+
+#@app.route('/inconsistencias', methods=['GET'])
+def verificar_consistencia_eventos():
+    # Cargar el archivo JSON que contiene los ESP y eventos
+    with open(RUTA_ARCHIVO_ITEMS, 'r') as file:
+        devices = json.load(file)
+
+    # Obtener todos los trabajos programados actualmente en el Scheduler
+    trabajos_programados = scheduler.get_jobs()
+
+    # Crear un set con los IDs de los trabajos en el Scheduler para comparación rápida
+    trabajos_programados_ids = {job.id for job in trabajos_programados}
+
+    inconsistencias = []
+
+    # Iterar sobre cada dispositivo en el JSON
+    for device in devices:
+        device_id = device['ID']
+        eventos_guardados = device.get('events', [])
+
+        # Iterar sobre los eventos de cada dispositivo
+        for evento in eventos_guardados:
+            job_id = evento['job_id']
+
+            # Verificar si el job_id está en el Scheduler
+            if job_id not in trabajos_programados_ids:
+                print(f"Reprogramando evento {job_id} para el dispositivo {device_id}")
+                programar_evento(device_id, evento)
+                inconsistencias.append({
+                    'device_id': device_id,
+                    'job_id': job_id,
+                    'problema': 'Evento en JSON no está en el Scheduler'
+                })
+
+        # por ahora solo verifico que lo que hay en los json no falte en el scheduler
+        # Verificar si el Scheduler tiene trabajos adicionales no presentes en el JSON
+        # for job in trabajos_programados:
+        #     if job.id not in {e['job_id'] for e in eventos_guardados} and job.id != 'checkeo_ESPs':
+        #         #print(f"Eliminando trabajo {job.id} del Scheduler para el dispositivo {device_id}")
+        #         #scheduler.remove_job(job.id)
+        #         inconsistencias.append({
+        #             'device_id': device_id,
+        #             'job_id': job.id,
+        #             'problema': 'Evento en el Scheduler no está en el JSON'
+        #         })
+
+    # Mostrar o manejar las inconsistencias
+    if inconsistencias:
+        print("Inconsistencias encontradas:")
+        for inconsistencia in inconsistencias:
+            print(f"Dispositivo: {inconsistencia['device_id']} - Job ID: {inconsistencia['job_id']} - Problema: {inconsistencia['problema']}")
+    else:
+        print("No se encontraron inconsistencias entre el JSON y el Scheduler.")
+
+    #return jsonify({"inconsistencias":str(inconsistencias)}), 200
+
+# Función para reprogramar un evento en el Scheduler basado en el evento guardado
+def programar_evento(device_id, evento):
+    job_id = evento['job_id']
+    event_type = evento['event_type']
+    event_data = evento['event_data']
+    event_action = evento['event_action']
+
+    if event_type == 'intervalo':
+        intervalo = int(event_data['interval'])
+        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+                            trigger=IntervalTrigger(seconds=intervalo),
+                            id=job_id)
+    elif event_type == 'horario':
+        time_str = event_data['time']  # Supongamos que es formato 'HH:MM'
+        hora, minuto = map(int, time_str.split(":"))
+        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+                            trigger=CronTrigger(hour=hora, minute=minuto),
+                            id=job_id)
+    elif event_type == 'fecha':
+        fecha_str = event_data['date']  # Supongamos que es formato 'YYYY-MM-DD HH:MM'
+        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+                            trigger=DateTrigger(run_date=fecha_str),
+                            id=job_id)
+
+
+# Función que se ejecutará al disparar el evento
+def ejecutar_evento(esp_id, job_id, event_action):
+    print(f"===> Ejecutando evento {job_id} para {esp_id}, {event_action}")
+    #scheduler.remove_job(job_id)
+
 
 @app.route('/schedule-event', methods=['POST'])
 def schedule_event():
@@ -406,14 +493,11 @@ def schedule_event():
         # Programar un evento repetitivo en intervalos
         trigger = IntervalTrigger(minutes=int(interval))
     
-    # Función que se ejecutará al disparar el evento
-    def ejecutar_evento():
-        print(f"===> Ejecutando evento para {esp_id}, {event_action}")
-        # Aquí puedes definir la lógica para enviar comandos al ESP
+    # Aquí puedes definir la lógica para enviar comandos al ESP
 
     # Agregar el evento al scheduler
     job_id = f"evento_{esp_id}_{event_type}"
-    scheduler.add_job(func=ejecutar_evento, trigger=trigger, id=job_id, replace_existing=True)
+    scheduler.add_job(func=lambda:ejecutar_evento(esp_id,job_id, event_action), trigger=trigger, id=job_id, replace_existing=True)
     print(f"Evento {job_id} creado para {event_data}")
     
     data = {
@@ -487,8 +571,9 @@ if __name__ == '__main__':
     scheduler = BackgroundScheduler()
 
     # Programa la tarea para ejecutarse cada 10 minutos
-    scheduler.add_job(func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
+    scheduler.add_job(id="checkeo_ESPs",func=check_esp_status, trigger="interval", seconds=CHECK_INTERVAL)
     scheduler.start()
+    verificar_consistencia_eventos()
 
     try:
         # Iniciar la aplicación Flask
