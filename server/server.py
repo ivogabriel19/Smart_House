@@ -525,18 +525,18 @@ def programar_evento(device_id, evento):
         intervalo = int(event_data['interval'])
         scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
                             trigger=IntervalTrigger(seconds=intervalo),
-                            id=job_id)
+                            id=job_id, replace_existing=True)
     elif event_type == 'horario':
         time_str = event_data['time']  # Supongamos que es formato 'HH:MM'
         hora, minuto = map(int, time_str.split(":"))
         scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
                             trigger=CronTrigger(hour=hora, minute=minuto),
-                            id=job_id)
+                            id=job_id, replace_existing=True)
     elif event_type == 'fecha':
         fecha_str = event_data['date']  # Supongamos que es formato 'YYYY-MM-DD HH:MM'
         scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
                             trigger=DateTrigger(run_date=fecha_str),
-                            id=job_id)
+                            id=job_id, replace_existing=True)
 
 
 # Función que se ejecutará al disparar el evento

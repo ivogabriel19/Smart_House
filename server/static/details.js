@@ -113,7 +113,7 @@ function getEvents(){
 
         // Verificar si hay eventos
         if (data.events.length === 0) {
-            eventosContainer.innerHTML = '<p>No hay eventos programados para este dispositivo.</p>';
+            //eventosContainer.innerHTML += '<p>No hay eventos programados para este dispositivo.</p>';
         } else {
             // Recorrer los eventos y agregarlos al contenedor
             data.events.forEach(evento => {
@@ -147,7 +147,7 @@ function getEvents(){
     .catch(error => {
         console.error('Error:', error);
         const eventosContainer = document.querySelector('.eventos-container');
-        eventosContainer.innerHTML = `<p>Error al cargar los eventos: ${error.message}</p>`;
+        eventosContainer.innerHTML += `<p>Error al cargar los eventos: ${error.message}</p>`;
     });
 }
 
