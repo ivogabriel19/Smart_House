@@ -440,6 +440,58 @@ def verificar_consistencia_eventos():
 
     #return jsonify({"inconsistencias":str(inconsistencias)}), 200
 
+# Endpoint para eliminar un evento
+@app.route('/delete_event', methods=['DELETE'])
+def delete_event():
+    data = request.json
+    device_id = data.get('device_id')
+    job_id = data.get('job_id')
+
+    if not device_id or not job_id:
+        return jsonify({"error": "device_id y job_id son necesarios"}), 400
+
+    # Cargar el archivo JSON
+    try:
+        with open(RUTA_ARCHIVO_ITEMS, 'r') as file:
+            devices = json.load(file)
+    except FileNotFoundError:
+        return jsonify({"error": "Archivo de dispositivos no encontrado"}), 500
+
+    # Buscar el dispositivo
+    dispositivo_encontrado = None
+    for device in devices:
+        if device['ID'] == device_id:
+            dispositivo_encontrado = device
+            break
+
+    if not dispositivo_encontrado:
+        return jsonify({"error": f"Dispositivo con ID {device_id} no encontrado"}), 404
+
+    # Buscar y eliminar el evento del dispositivo
+    evento_encontrado = None
+    for evento in dispositivo_encontrado['events']:
+        if evento['job_id'] == job_id:
+            evento_encontrado = evento
+            dispositivo_encontrado['events'].remove(evento)
+            break
+
+    if not evento_encontrado:
+        return jsonify({"error": f"Evento con job_id {job_id} no encontrado en el dispositivo {device_id}"}), 404
+
+    # Guardar el archivo JSON actualizado
+    with open(RUTA_ARCHIVO_ITEMS, 'w') as file:
+        json.dump(devices, file, indent=4)
+
+    # Eliminar el evento del Scheduler
+    job = scheduler.get_job(job_id)
+    if job:
+        scheduler.remove_job(job_id)
+    else:
+        return jsonify({"error": f"Job con ID {job_id} no encontrado en el Scheduler"}), 404
+
+    return jsonify({"success": f"Evento con job_id {job_id} eliminado del dispositivo {device_id} y del Scheduler"}), 200
+
+
 # Función para reprogramar un evento en el Scheduler basado en el evento guardado
 def programar_evento(device_id, evento):
     job_id = evento['job_id']
