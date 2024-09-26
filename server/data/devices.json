@@ -24,15 +24,6 @@
         },
         "events": [
             {
-                "job_id": "evento_ESP32_002_intervalo",
-                "event_type": "intervalo",
-                "event_data": {
-                    "eventType": "intervalo",
-                    "interval": "5"
-                },
-                "event_action": "activar"
-            },
-            {
                 "job_id": "evento_ESP32_002_horario",
                 "event_type": "horario",
                 "event_data": {
