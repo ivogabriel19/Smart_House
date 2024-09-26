@@ -325,6 +325,28 @@ def add_event_to_esp(esp_id, data):
     esp["events"].append(data)
     actualizar_item(esp)
 
+# Ruta para obtener los eventos de un ESP32 específico
+@app.route('/get_esp_events/<string:device_id>', methods=['GET'])
+def get_esp_events(device_id):
+    try:
+        # Cargar el archivo JSON de los dispositivos
+        with open(RUTA_ARCHIVO_ITEMS, 'r') as f:
+            devices = json.load(f)
+
+        # Buscar el dispositivo por su ID
+        for device in devices:
+            if device['ID'] == device_id:
+                # Si el dispositivo se encuentra, devolver sus eventos
+                events = device.get('events', [])
+                return jsonify({"device_id": device_id, "events": events}), 200
+
+        # Si no se encuentra el dispositivo, devolver un error 404
+        return jsonify({"error": "Device not found"}), 404
+    
+    except Exception as e:
+        # Si ocurre algún error en la lectura o manejo del archivo JSON, devolver un error 500
+        return jsonify({"error": str(e)}), 500
+
 #ruta que actualiza el estado del boton proveniente del front
 @app.route('/update_button', methods=['POST'])
 def update_button():

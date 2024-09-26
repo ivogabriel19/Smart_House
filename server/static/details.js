@@ -98,6 +98,59 @@ function add_sensor_card(esp){
     container.appendChild(card);
 }
 
+function getEvents(){
+    fetch('/get_esp_events/' + device_id)
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Error al obtener los eventos.');
+        }
+        return response.json();
+    })
+    .then(data => {
+        // Obtener el contenedor donde se mostrarán los eventos
+        const eventosContainer = document.querySelector('.eventos-container');
+        //eventosContainer.innerHTML = ''; // Limpiar el contenedor
+
+        // Verificar si hay eventos
+        if (data.events.length === 0) {
+            eventosContainer.innerHTML = '<p>No hay eventos programados para este dispositivo.</p>';
+        } else {
+            // Recorrer los eventos y agregarlos al contenedor
+            data.events.forEach(evento => {
+                const eventDiv = document.createElement('div');
+                eventDiv.classList.add('event');
+
+                // Crear los elementos para mostrar los detalles del evento
+                const jobId = document.createElement('p');
+                jobId.textContent = `Job ID: ${evento.job_id}`;
+
+                const eventType = document.createElement('p');
+                eventType.textContent = `Tipo de evento: ${evento.event_type}`;
+
+                const eventAction = document.createElement('p');
+                eventAction.textContent = `Acción: ${evento.event_action}`;
+
+                const eventData = document.createElement('pre');
+                eventData.textContent = `Datos del evento: ${JSON.stringify(evento.event_data, null, 2)}`;
+
+                // Agregar los detalles del evento al div
+                eventDiv.appendChild(jobId);
+                eventDiv.appendChild(eventType);
+                eventDiv.appendChild(eventAction);
+                eventDiv.appendChild(eventData);
+
+                // Insertar el evento en el contenedor de eventos
+                eventosContainer.appendChild(eventDiv);
+            });
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        const eventosContainer = document.querySelector('.eventos-container');
+        eventosContainer.innerHTML = `<p>Error al cargar los eventos: ${error.message}</p>`;
+    });
+}
+
 addEventBtn.addEventListener("click", () => {
     event_modal.showModal();
     //console.log("open!");
@@ -248,5 +301,6 @@ async function renderChart() {
 // Llamar a la función para obtener la lista de ESP al cargar la página
 window.onload = () => {
     getEsp();
+    getEvents();
     renderChart();
 };

@@ -66,6 +66,25 @@
             "temperatura": "23.60",
             "humedad": 86.9
         },
-        "events": []
+        "events": [
+            {
+                "job_id": "evento_ESP32_003_horario",
+                "event_type": "horario",
+                "event_data": {
+                    "eventType": "horario",
+                    "time": "09:00"
+                },
+                "event_action": ""
+            },
+            {
+                "job_id": "evento_ESP32_003_horario",
+                "event_type": "horario",
+                "event_data": {
+                    "eventType": "horario",
+                    "time": "09:59"
+                },
+                "event_action": ""
+            }
+        ]
     }
 ]

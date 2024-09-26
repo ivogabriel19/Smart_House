@@ -305,7 +305,30 @@ header{
 
 .eventos-container{
 
+    display: flex;
     flex-direction: row-reverse;
+
+    .event{
+        width: fit-content;
+        max-width: 33%;                         /* Ancho máximo del botón */
+        font-style: italic;         /* Estiliza el texto en cursiva */
+        color: #888;                /* Color gris claro para el texto */
+        background-color: #fff;                  /* Fondo blanco */
+        padding: 10px;                           /* Relleno interno */
+        border-radius: 8px;                      /* Bordes redondeados */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Sombra sutil */
+        text-align: center;                      /* Texto centrado */
+        cursor: pointer;                         /* Cambia el cursor a pointer */
+        transition: box-shadow 0.15s ease;        /* Suaviza la transición en hover */
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+
+        &:hover{
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra más intensa al hacer hover */
+        }
+    }
 
     .add-event-btn{
         width: fit-content;
