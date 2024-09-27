@@ -307,11 +307,12 @@ header{
 
     display: flex;
     gap: 1em;
+    flex-wrap: wrap;
     /* flex-direction: row-reverse; */
 
     .event{
         width: fit-content;
-        max-width: 33%;                         /* Ancho máximo del botón */
+        max-width: 75%;                         /* Ancho máximo del botón */
         font-style: italic;         /* Estiliza el texto en cursiva */
         color: #888;                /* Color gris claro para el texto */
         background-color: #fff;                  /* Fondo blanco */
