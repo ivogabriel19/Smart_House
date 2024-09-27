@@ -544,6 +544,20 @@ def ejecutar_evento(esp_id, job_id, event_action):
     print(f"===> Ejecutando evento {job_id} para {esp_id}, {event_action}")
     #scheduler.remove_job(job_id)
 
+def event_relay_on(esp_id):
+    esp = leer_item(esp_id)
+    esp_ip = esp["IP"]
+    
+    print("===== > te salio casi bien pa")
+
+    try:
+        response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
+        #return ({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+    except requests.exceptions.RequestException as e:
+        #return ({'status': 'error', 'message': str(e)})   
+        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})     
+
 
 @app.route('/schedule-event', methods=['POST'])
 def schedule_event():
@@ -569,10 +583,11 @@ def schedule_event():
     
     # Aquí puedes definir la lógica para enviar comandos al ESP
 
-    # Agregar el evento al scheduler
-    job_id = f"evento_{esp_id}_{event_type}"
-    scheduler.add_job(func=lambda:ejecutar_evento(esp_id,job_id, event_action), trigger=trigger, id=job_id, replace_existing=True)
-    print(f"Evento {job_id} creado para {event_data}")
+    if event_action == "activar":
+        # Agregar el evento al scheduler
+        job_id = f"evento_{esp_id}_{event_type}"
+        scheduler.add_job(func=lambda:event_relay_on(esp_id), trigger=trigger, id=job_id, replace_existing=True)
+        print(f"Evento {job_id} creado para {event_data}")
     
     data = {
         "job_id" : job_id,
