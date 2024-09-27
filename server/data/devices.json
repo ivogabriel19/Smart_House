@@ -12,11 +12,10 @@
         },
         "events": [
             {
-                "job_id": "evento_Fake_Sensor_ESP_horario",
-                "event_type": "horario",
+                "job_id": "evento_Fake_Sensor_ESP_intervalo",
+                "event_type": "intervalo",
                 "event_data": {
-                    "eventType": "horario",
-                    "time": "20:00"
+                    "interval": "5"
                 },
                 "event_action": ""
             }
@@ -74,15 +73,6 @@
                 "event_data": {
                     "eventType": "horario",
                     "time": "09:00"
-                },
-                "event_action": ""
-            },
-            {
-                "job_id": "evento_ESP32_003_horario",
-                "event_type": "horario",
-                "event_data": {
-                    "eventType": "horario",
-                    "time": "09:59"
                 },
                 "event_action": ""
             }

@@ -325,9 +325,37 @@ header{
         display: flex;
         flex-direction: column;
         align-items: center;
+        position: relative;
 
         &:hover{
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra más intensa al hacer hover */
+        }
+
+        .open-modal{
+            display: flex;
+            justify-content: center;
+            
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+    
+            background-color: gray;
+            color: white;
+            border-radius: 50%;
+            height: 1rem;
+            width: 1rem;
+            font-size: 0.75rem;
+            
+            transition: 0.3s;
+            
+            &:hover{
+                background-color: red;
+                top: 0.5rem;
+                right: 0.5rem;
+                height: 1.5rem;
+                width: 1.5rem;
+                font-size: 1.25rem;
+            }
         }
     }
 
@@ -362,60 +390,101 @@ header{
     }
 }
 
-.add-event{
-    width: 20em;
-    /* height: 30em; */
-    max-height: 80vh;
-    border: none;
-    border-radius: 0.75em;
-    padding: 0.5em;
-    position: absolute;
-    translate: calc(50vw - 10em) calc(50vh - 15em);
+.eventos{
+    .add-event{
+        width: 20em;
+        /* height: 30em; */
+        max-height: 80vh;
+        border: none;
+        border-radius: 0.75em;
+        padding: 0.5em;
+        position: absolute;
+        translate: calc(50vw - 10em) calc(50vh - 15em);
 
-    .form-container{
-        display: flex;
-        flex-direction: column;
-        gap: 1rem;
-
-        margin-bottom: 10px;
-
-        /* .form-group{
-            padding: 0.5rem;
-        } */
-
-        #event-form{
+        .form-container{
             display: flex;
             flex-direction: column;
             gap: 1rem;
+
+            margin-bottom: 10px;
+
+            /* .form-group{
+                padding: 0.5rem;
+            } */
+
+            #event-form{
+                display: flex;
+                flex-direction: column;
+                gap: 1rem;
+            }
+        }
+
+        input, select {
+            width: 100%;
+            padding: 8px;
+        }
+
+        &::backdrop{
+            background-color: #222E;
+        }
+
+        button{
+            padding: 0.35rem;
+            border: none;
+            cursor: pointer;
+            border-radius: 0.25rem;
+            /* background-color: #DDD; */
+
+            transition: 0.1s;
+
+            &:hover{
+                font-weight: 800;
+            }
+        }
+
+        .confirm{
+            color: white;
+            background-color: dodgerblue;
         }
     }
 
-    input, select {
-        width: 100%;
-        padding: 8px;
-    }
-
-    &::backdrop{
-        background-color: #222E;
-    }
-
-    button{
-        padding: 0.35rem;
+    .delete-confirm{
+        width: 18em;
+        height: 4.5em;
         border: none;
-        cursor: pointer;
-        border-radius: 0.25rem;
-        /* background-color: #DDD; */
+        border-radius: 0.75em;
+        padding: 0.5em;
+        position: absolute;
+        translate: calc(50vw - 9em) calc(50vh - 2.25em);
+        /* display: none; */
+        /* flex-direction: column; */
+        /* justify-content: center; */
 
-        transition: 0.1s;
-
-        &:hover{
-            font-weight: 800;
+        p{
+            margin-bottom: 0.3em;
         }
-    }
 
-    .confirm{
-        color: white;
-        background-color: dodgerblue;
+        &::backdrop{
+            background-color: #222E;
+        }
+
+        button{
+            padding: 0.35rem;
+            border: none;
+            border-radius: 0.25rem;
+            background-color: #DDD;
+
+            transition: 0.1s;
+
+            &:hover{
+                font-weight: 800;
+            }
+        }
+
+        .confirm{
+            color: white;
+            background-color: red;
+        }
     }
 }
 

@@ -1,18 +1,61 @@
-const device_id = sessionStorage.getItem('selectedDeviceID');
-let device_data = {};
+
 const homeBtn = document.getElementById("btnHome");
 const addEventBtn = document.getElementById("add-event-btn");
-const event_modal = document.querySelector("[data-modal]");
-const confirmBtn = document.querySelector("[confirm-btn]");
-const closeBtn = document.querySelector(".close-modal");
+const event_modal = document.querySelector("[data-del-modal]");
+const confirmdelBtn = document.querySelector("[confirm-del-btn]");
+const closeBtn = document.querySelector(".close-del-modal");
 const espSelect = document.getElementById("esp-id-select");
 const typeSelect = document.getElementById("event-type");
 const actionSelect = document.getElementById('event-action');
 const optionsContainer = document.querySelector(".options");
 const form = document.getElementById("event-form");
 
+let openBtns = document.querySelectorAll(".open-modal");
+const closeBtns = document.querySelectorAll(".close-modal");
+const modal = document.querySelector("[data-modal]");
+const confirmBtn = document.querySelector("[confirm-btn]");
+
+const device_id = sessionStorage.getItem('selectedDeviceID');
+let device_data = {};
+var event_to_delete = "";
+
 homeBtn.addEventListener("click", () => {
     window.location.href = "/";
+})
+
+closeBtns.forEach(btn => {
+    btn.addEventListener("click", () => {
+        modal.close();
+    })
+});
+
+confirmBtn.addEventListener("click", () =>{
+    console.log(event_to_delete);
+    fetch('/delete_event', {
+        method: 'DELETE',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            "device_id" : device_id,
+            "job_id" : event_to_delete
+        })
+    })
+    .then(response => {
+        // Verificar el status code
+        if (response.status === 200) {
+            return response.json(); // Convertir la respuesta a JSON
+        } else {
+            throw new Error(`Error: Status code ${response.status}`);
+        }
+    }).then(data => {
+        getEvents();
+        console.log(data);
+    })
+    .catch(error => {
+        console.error('Error removing ' + event_to_delete, error);
+    });
+    modal.close();
 })
 
 function getEsp(){
@@ -109,11 +152,11 @@ function getEvents(){
     .then(data => {
         // Obtener el contenedor donde se mostrarán los eventos
         const eventosContainer = document.querySelector('.eventos-container');
-        //eventosContainer.innerHTML = ''; // Limpiar el contenedor
+        eventosContainer.innerHTML = ''; // Limpiar el contenedor
 
         // Verificar si hay eventos
         if (data.events.length === 0) {
-            //eventosContainer.innerHTML += '<p>No hay eventos programados para este dispositivo.</p>';
+            eventosContainer.innerHTML = '<p>No hay eventos programados para este dispositivo.</p>';
         } else {
             // Recorrer los eventos y agregarlos al contenedor
             data.events.forEach(evento => {
@@ -122,7 +165,7 @@ function getEvents(){
 
                 // Crear los elementos para mostrar los detalles del evento
                 const jobId = document.createElement('p');
-                jobId.textContent = `Job ID: ${evento.job_id}`;
+                jobId.innerHTML = `<strong>${evento.job_id}</strong><span data-open-modal class="open-modal">x</span>`;
 
                 const eventType = document.createElement('p');
                 eventType.textContent = `Tipo de evento: ${evento.event_type}`;
@@ -142,35 +185,63 @@ function getEvents(){
                 // Insertar el evento en el contenedor de eventos
                 eventosContainer.appendChild(eventDiv);
             });
+
+            openBtns = document.querySelectorAll(".open-modal");
+
+            //Botones que manejan la eliminacion de uns ESP de la lista
+            openBtns.forEach(btn => {
+                btn.addEventListener("click", () => {
+                    modal.showModal();
+                    event_to_delete = btn.parentElement.textContent.slice(0, -1);
+                    //document.querySelector("[data-modal]").style.display = flex;
+                })
+            });
         }
+        
+        add_add_event_button();
     })
     .catch(error => {
         console.error('Error:', error);
         const eventosContainer = document.querySelector('.eventos-container');
-        eventosContainer.innerHTML += `<p>Error al cargar los eventos: ${error.message}</p>`;
+        eventosContainer.innerHTML = `<p>Error al cargar los eventos: ${error.message}</p>`;
+        add_add_event_button();
     });
 }
 
-addEventBtn.addEventListener("click", () => {
-    event_modal.showModal();
-    //console.log("open!");
-    const op = document.createElement('option');
-    op.innerHTML = `<option value=${device_id}>${device_id}</option>`;
-    espSelect.appendChild(op);
-    espSelect.value = device_id;
-    espSelect.disabled = true;
+function add_add_event_button(){
 
-    if (device_data.type == "Actuador"){
-        actionSelect.innerHTML += `<option value="activar">Activar actuador</option>
-                                    <option value="desactivar">Desactivar Actuador</option>`;
-    }
-})
+    const btn = document.createElement('div');
+    btn.classList.add('add-event-btn');
+    btn.id = 'add-event-btn';            
+
+    btn.innerHTML = `<span>+</span>añadir Evento`;
+    
+    const eventosContainer = document.querySelector('.eventos-container');
+    eventosContainer.appendChild(btn);
+
+    const _addEventBtn = document.getElementById("add-event-btn");
+
+    _addEventBtn.addEventListener("click", () => {
+        event_modal.showModal();
+        //console.log("open!");
+        const op = document.createElement('option');
+        op.innerHTML = `<option value=${device_id}>${device_id}</option>`;
+        espSelect.appendChild(op);
+        espSelect.value = device_id;
+        espSelect.disabled = true;
+
+        if (device_data.type == "Actuador"){
+            actionSelect.innerHTML += `<option value="activar">Activar actuador</option>
+                                        <option value="desactivar">Desactivar Actuador</option>`;
+        }
+    })
+}
 
 closeBtn.addEventListener("click", () => {
     event_modal.close();
 })
 
-confirmBtn.addEventListener("click", (i) =>{
+confirmdelBtn.addEventListener("click", (i) =>{
     // Obtener los valores de los campos
     const eventType = document.getElementById('event-type').value;
     const eventAction = document.getElementById('event-action').value;
@@ -201,7 +272,7 @@ confirmBtn.addEventListener("click", (i) =>{
     })
     .then(response => response.json())
     .then(data => {
-        //alert(data.message);
+        getEvents();
     });
     console.log(eventData);
     event_modal.close();
