@@ -178,14 +178,14 @@ confirmBtn.addEventListener("click", (i) =>{
     // Obtener los valores según el tipo de evento
     if (eventType === 'horario') {
         const time = document.getElementById('time').value;
-        eventData = { eventType, time };
+        eventData = { time };
     } else if (eventType === 'fecha') {
         const date = document.getElementById('date').value;
         const time = document.getElementById('time').value;
-        eventData = { eventType, date, time };
+        eventData = { date, time };
     } else if (eventType === 'intervalo') {
         const interval = document.getElementById('interval').value;
-        eventData = { eventType, interval };
+        eventData = { interval };
     }
 
     fetch("/schedule-event", {
