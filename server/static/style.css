@@ -306,7 +306,8 @@ header{
 .eventos-container{
 
     display: flex;
-    flex-direction: row-reverse;
+    gap: 1em;
+    /* flex-direction: row-reverse; */
 
     .event{
         width: fit-content;
@@ -331,6 +332,7 @@ header{
     }
 
     .add-event-btn{
+        order: 1;
         width: fit-content;
         max-width: 33%;                         /* Ancho máximo del botón */
         font-style: italic;         /* Estiliza el texto en cursiva */
