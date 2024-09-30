@@ -521,37 +521,43 @@ def programar_evento(device_id, evento):
     event_data = evento['event_data']
     event_action = evento['event_action']
 
+    func = event_relay_on if event_action == 'activar' else event_relay_off
+
     if event_type == 'intervalo':
         intervalo = int(event_data['interval'])
-        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+        scheduler.add_job(func=lambda: func(device_id),
                             trigger=IntervalTrigger(seconds=intervalo),
                             id=job_id, replace_existing=True)
     elif event_type == 'horario':
         time_str = event_data['time']  # Supongamos que es formato 'HH:MM'
         hora, minuto = map(int, time_str.split(":"))
-        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+        scheduler.add_job(func=lambda: func(device_id),
                             trigger=CronTrigger(hour=hora, minute=minuto),
                             id=job_id, replace_existing=True)
     elif event_type == 'fecha':
         fecha_str = event_data['date']  # Supongamos que es formato 'YYYY-MM-DD HH:MM'
-        scheduler.add_job(func=lambda: ejecutar_evento(device_id, job_id, event_action),
+        scheduler.add_job(func=lambda: func(device_id),
                             trigger=DateTrigger(run_date=fecha_str),
                             id=job_id, replace_existing=True)
-
-
-# Función que se ejecutará al disparar el evento
-def ejecutar_evento(esp_id, job_id, event_action):
-    print(f"===> Ejecutando evento {job_id} para {esp_id}, {event_action}")
-    #scheduler.remove_job(job_id)
 
 def event_relay_on(esp_id):
     esp = leer_item(esp_id)
     esp_ip = esp["IP"]
-    
-    print("===== > te salio casi bien pa")
 
     try:
-        response = requests.post(f"http://{esp_ip}/actuator", json={'state': button_state})
+        response = requests.post(f"http://{esp_ip}/actuator", json={'state': "OFF"})
+        #return ({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
+    except requests.exceptions.RequestException as e:
+        #return ({'status': 'error', 'message': str(e)})   
+        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})     
+
+def event_relay_off(esp_id):
+    esp = leer_item(esp_id)
+    esp_ip = esp["IP"]
+
+    try:
+        response = requests.post(f"http://{esp_ip}/actuator", json={'state': "ON"})
         #return ({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
         print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
     except requests.exceptions.RequestException as e:
@@ -563,6 +569,7 @@ def event_relay_on(esp_id):
 def schedule_event():
     data = request.json
     esp_id = data.get('esp_id')
+    event_alias = data.get('eventAlias')
     event_action = data.get('eventAction')
     event_type = data.get('eventType')
     event_data = data.get('eventData')
@@ -583,14 +590,23 @@ def schedule_event():
     
     # Aquí puedes definir la lógica para enviar comandos al ESP
 
+
+    job_id = f"evento_{esp_id}_{event_type}"
+
     if event_action == "activar":
-        # Agregar el evento al scheduler
-        job_id = f"evento_{esp_id}_{event_type}"
+        # Agregar el evento al scheduler llamando a la funcion que corresponda
         scheduler.add_job(func=lambda:event_relay_on(esp_id), trigger=trigger, id=job_id, replace_existing=True)
         print(f"Evento {job_id} creado para {event_data}")
     
+    if event_action == "desactivar":
+        # Agregar el evento al scheduler llamando a la funcion que corresponda
+        scheduler.add_job(func=lambda:event_relay_off(esp_id), trigger=trigger, id=job_id, replace_existing=True)
+        print(f"Evento {job_id} creado para {event_data}")
+    
+    
     data = {
         "job_id" : job_id,
+        "event_alias" : event_alias,
         "event_type" : event_type,
         "event_data" : event_data,
         "event_action" : event_action

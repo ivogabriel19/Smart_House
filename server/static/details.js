@@ -163,9 +163,13 @@ function getEvents(){
                 const eventDiv = document.createElement('div');
                 eventDiv.classList.add('event');
 
+                const eventAlias = document.createElement('p');
+                eventAlias.classList.add('alias');
+                eventAlias.innerHTML = `${evento.event_alias}`;
+
                 // Crear los elementos para mostrar los detalles del evento
                 const jobId = document.createElement('p');
-                jobId.innerHTML = `<strong>${evento.job_id}</strong><span data-open-modal class="open-modal">x</span>`;
+                jobId.innerHTML = `<small><small>${evento.job_id}</small></small><span data-open-modal class="open-modal">x</span>`;
 
                 const eventType = document.createElement('p');
                 eventType.textContent = `Tipo de evento: ${evento.event_type}`;
@@ -177,7 +181,9 @@ function getEvents(){
                 eventData.textContent = `Datos del evento: ${JSON.stringify(evento.event_data, null, 2)}`;
 
                 // Agregar los detalles del evento al div
+                eventDiv.appendChild(eventAlias);
                 eventDiv.appendChild(jobId);
+                eventDiv.appendChild( document.createElement('br') );
                 eventDiv.appendChild(eventType);
                 eventDiv.appendChild(eventAction);
                 eventDiv.appendChild(eventData);
@@ -231,7 +237,7 @@ function add_add_event_button(){
         espSelect.disabled = true;
 
         if (device_data.type == "Actuador"){
-            actionSelect.innerHTML += `<option value="activar">Activar actuador</option>
+            actionSelect.innerHTML = `<option value="activar">Activar actuador</option>
                                         <option value="desactivar">Desactivar Actuador</option>`;
         }
     })
@@ -243,6 +249,7 @@ closeBtn.addEventListener("click", () => {
 
 confirmdelBtn.addEventListener("click", (i) =>{
     // Obtener los valores de los campos
+    const eventAlias = document.getElementById('event-alias').value;
     const eventType = document.getElementById('event-type').value;
     const eventAction = document.getElementById('event-action').value;
 
@@ -265,6 +272,7 @@ confirmdelBtn.addEventListener("click", (i) =>{
             "Content-Type": "application/json"
         },
         body: JSON.stringify({  'esp_id': device_id ,
+                                'eventAlias': eventAlias , 
                                 'eventAction': eventAction , 
                                 'eventType': eventType , 
                                 'eventData': eventData

@@ -332,6 +332,12 @@ header{
             box-shadow: 0 0 15px rgba(0, 0, 0, 0.2); /* Sombra más intensa al hacer hover */
         }
 
+        .alias{
+            color: black;
+            font-size: 1.2rem;
+            font-weight: 800;
+        }
+
         .open-modal{
             display: flex;
             justify-content: center;
