@@ -591,7 +591,7 @@ def schedule_event():
     # Aquí puedes definir la lógica para enviar comandos al ESP
 
 
-    job_id = f"evento_{esp_id}_{event_type}"
+    job_id = f"evento_{esp_id}_{event_alias}"
 
     if event_action == "activar":
         # Agregar el evento al scheduler llamando a la funcion que corresponda
