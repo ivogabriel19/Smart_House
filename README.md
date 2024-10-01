@@ -11,12 +11,15 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 - **Frontend simple**: La interfaz web está construida con HTML, CSS y JavaScript puro, sin frameworks adicionales.
 - **Sistema para Red de area local**: La Raspberry Pi está configurada para tener una IP dentro de la subred 192.168.1.x la cual buscaran los ESP32 para iniciar la comunicacion..
 - **Heartbeat System**: Sistema de "latidos" para monitorear el estado de los ESP.
+- **Programacion de eventos**: Programacion de distintos eventos disparados por una fecha un horario especifico o periodicamente por intervalos de tiempo.
 
 ## Funcionalidades
 #### Front-end
 
 - Visualizacion de clientes ESP32 registrados y sus datos ✔
 - Visualizacion de estado de conexion de los ESP32 ✔
+- Pagina de detalles de cada ESP ✔
+- Creacion y administracion de eventos para cada ESP ✔
 - Logueo de usuario ⏳
 - Visualizacion de datos por ambiente ⏳
 - Visualizacion de datos del control de acceso ⏳
@@ -30,6 +33,7 @@ Todos los dispositivos deben encontrarse en la misma red local, la Raspberry (o 
 #### Back-end
 - Recepcion de registro de ESPs ✔
 - Backgroun del sistema de "Heartbeat" de los ESPs ✔
+- background eventos ✔
 - Usuarios ⏳
 - Persistencia de informacion ✔
 - Respuesta a las solicitudes del Front ✔
