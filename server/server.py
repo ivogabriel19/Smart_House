@@ -550,7 +550,7 @@ def event_relay_on(esp_id):
         print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
     except requests.exceptions.RequestException as e:
         #return ({'status': 'error', 'message': str(e)})   
-        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})     
+        print({'status': 'error', 'message': f'error trying to execute the event'})     
 
 def event_relay_off(esp_id):
     esp = leer_item(esp_id)
@@ -562,7 +562,7 @@ def event_relay_off(esp_id):
         print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})
     except requests.exceptions.RequestException as e:
         #return ({'status': 'error', 'message': str(e)})   
-        print({'status': 'success', 'message': f'ESP32 responded with {response.text}'})     
+        print({'status': 'error', 'message': f'error trying to execute the event'})     
 
 
 @app.route('/schedule-event', methods=['POST'])

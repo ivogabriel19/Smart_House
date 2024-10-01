@@ -10,16 +10,7 @@
             "temperatura": "25",
             "humedad": "27"
         },
-        "events": [
-            {
-                "job_id": "evento_Fake_Sensor_ESP_intervalo",
-                "event_type": "intervalo",
-                "event_data": {
-                    "interval": "5"
-                },
-                "event_action": ""
-            }
-        ]
+        "events": []
     },
     {
         "ID": "ESP32_002",
@@ -31,17 +22,7 @@
         "data": {
             "switch": "OFF"
         },
-        "events": [
-            {
-                "job_id": "evento_ESP32_002_horario",
-                "event_type": "horario",
-                "event_data": {
-                    "eventType": "horario",
-                    "time": "18:00"
-                },
-                "event_action": "activar"
-            }
-        ]
+        "events": []
     },
     {
         "ID": "ESP01",
@@ -66,16 +47,6 @@
             "temperatura": "23.60",
             "humedad": 86.9
         },
-        "events": [
-            {
-                "job_id": "evento_ESP32_003_horario",
-                "event_type": "horario",
-                "event_data": {
-                    "eventType": "horario",
-                    "time": "09:00"
-                },
-                "event_action": ""
-            }
-        ]
+        "events": []
     }
 ]
