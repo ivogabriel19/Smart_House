@@ -1,30 +1,5 @@
 [
-    {
-        "ID": "Fake_Sensor_ESP",
-        "IP": "127.0.0.1",
-        "MAC": "24:0A:C4:1A:2B:3C",
-        "status": "Offline",
-        "last_seen": 1726295179.398672,
-        "type": "Sensor",
-        "data": {
-            "temperatura": "25",
-            "humedad": "27"
-        },
-        "events": []
-    },
-    {
-        "ID": "ESP32_002",
-        "IP": "192.168.0.42",
-        "MAC": "C0:49:EF:65:2C:E4",
-        "status": "Offline",
-        "last_seen": 1726378971.130917,
-        "type": "Actuador",
-        "data": {
-            "switch": "OFF"
-        },
-        "events": []
-    },
-    {
+        {
         "ID": "ESP01",
         "IP": "192.168.0.4",
         "MAC": "A4:E5:7C:03:7A:FC",
@@ -33,19 +8,6 @@
         "type": "Actuador",
         "data": {
             "switch": "OFF"
-        },
-        "events": []
-    },
-    {
-        "ID": "ESP32_003",
-        "IP": "192.168.0.23",
-        "MAC": "08:D1:F9:34:74:0C",
-        "status": "Offline",
-        "last_seen": 1727033902.8000472,
-        "type": "Sensor",
-        "data": {
-            "temperatura": "23.60",
-            "humedad": 86.9
         },
         "events": []
     }
