@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Scheduler Jobs</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/events_view.css') }}">
+</head>
+<body>
+
+    <header>
+        <img src="{{ url_for('static', filename='imgs/home-logo.png') }}" alt="logo">
+        <nav>
+            <ul>
+                <li id="btnHome">Home</li>
+            </ul>
+        </nav>
+    </header>
+
+    <div class="container">
+        <h2>Scheduled Jobs</h2>
+        <div id="job-list">
+            <div class="loading">Loading jobs...</div>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/events_view.js') }}"></script>
+
+</body>
+</html>

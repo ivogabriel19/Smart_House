@@ -6,8 +6,17 @@ events_bp = Blueprint('events', __name__)
 @events_bp.route('/get-events', methods=['GET'])
 def get_eventss():
     print_events()
-    return jsonify({"size:" : str(len(get_events())),
-                    "jobs":str(get_events())}), 200
+
+    jobs = get_events()
+    job_list = []
+
+    for job in jobs:
+        job_list.append({
+            'id': job.id,
+            'name': job.name,
+        })
+
+    return jsonify(job_list)
 
 # Ruta para obtener los eventos de un ESP32 específico
 @events_bp.route('/get_esp_events/<string:device_id>', methods=['GET'])

@@ -9,3 +9,7 @@ def index():
 @views_bp.route('/device')
 def device_page():
     return render_template('device.html')
+
+@views_bp.route('/events')
+def events_page():
+    return render_template('events.html')
