@@ -4,7 +4,7 @@ from controllers.events_logic import get_events,print_events, programar_evento, 
 events_bp = Blueprint('events', __name__)
 
 @events_bp.route('/get-events', methods=['GET'])
-def get_events():
+def get_eventss():
     print_events()
     return jsonify({"size:" : str(len(get_events())),
                     "jobs":str(get_events())}), 200
