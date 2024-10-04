@@ -3,6 +3,12 @@ from controllers.devices_logic import check_esp_status, register_esp, receive_he
 
 devices_bp = Blueprint('devices', __name__)
 
+#ruta para devolver el listado harcodeado de ESPs
+@devices_bp.route('/api/esp/list', methods=['GET'])
+def get_esp_list():
+    (res, cod) = esp_list()
+    return jsonify(res), cod
+
 #ruta para que se registren los ESP
 @devices_bp.route('/register', methods=['POST'])
 def register_device():
@@ -13,13 +19,7 @@ def register_device():
     device_ip = request.remote_addr  # Se obtiene la IP del dispositivo automáticamente
     
     (res, cod) = register_esp(device_id, device_mac, device_type, device_ip)
-
-    return jsonify(res), cod
-
-#ruta para devolver el listado harcodeado de ESPs
-@devices_bp.route('/api/esp/list', methods=['GET'])
-def get_esp_list():
-    (res, cod) = esp_list()
+    
     return jsonify(res), cod
 
 #ruta para recibir los "heartbeats"
@@ -55,7 +55,7 @@ def update_TyH():
 
 @devices_bp.route('/get-TyH', methods=['GET'])
 def send_TyH():
-    return jsonify(), 200
+    return jsonify({"msg":"dummy"}), 200
 
 @devices_bp.route('/checkESP', methods=['GET'])
 def launch_check_esp_list():

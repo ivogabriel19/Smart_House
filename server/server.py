@@ -1,6 +1,5 @@
 from flask import Flask
-from flask_socketio import SocketIO, send, emit
-from apscheduler.schedulers.background import BackgroundScheduler
+from flask_socketio import SocketIO, emit
 
 from routes.views import views_bp
 from routes.files_CRUD import files_bp
