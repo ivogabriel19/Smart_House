@@ -1,7 +1,13 @@
 from flask import request
 import requests, time
 from services.file_manager import guardar_item, guardar_items, leer_item, leer_items, actualizar_item, create_historic_file, guardar_historico_sensor
-from server.server import socket_emit, CHECK_INTERVAL, VERIFICATION_TIMEOUT
+from server.server import socket_emit
+
+# Intervalo de verificación en segundos (15 minutos)
+CHECK_INTERVAL = 900 # 15 minutos
+
+# Tiempo de espera para la respuesta del ESP32 (en segundos) cuando se verifica conexion
+VERIFICATION_TIMEOUT = 10 
 
 def esp_list():
     return leer_items(), 200
