@@ -1,6 +1,7 @@
 from flask import request
 import requests, time
 from services.file_manager import guardar_item, guardar_items, leer_item, leer_items, actualizar_item, create_historic_file, guardar_historico_sensor
+from services.socket_buffer import socket_emit
 
 # Intervalo de verificación en segundos (15 minutos)
 CHECK_INTERVAL = 900 # 15 minutos
@@ -40,7 +41,7 @@ def register_esp(device_id, device_mac, device_type, device_ip):
         guardar_item(new_device)  # guarda el nuevo dispositivo en archivo
         
         # Enviar datos al front
-        #socket_emit('add_ESP_to_List', new_device)
+        socket_emit('add_ESP_to_List', new_device)
 
         # Crear archivo histórico para este dispositivo
         create_historic_file(device_id)
@@ -112,7 +113,7 @@ def post_tyh(esp_id, temp, hum):
     actualizar_item(esp)
 
     # envia al front los datos recien recibidos
-    #socket_emit('sensor_update', esp)
+    socket_emit('sensor_update', esp)
 
     guardar_historico_sensor(esp_id, esp['data'])
 
@@ -136,8 +137,7 @@ def check_esp_status():
             if device['status'] == 'Online': device['last_seen'] = time.time()
     # Guardar los cambios en el archivo después de la verificación
     guardar_items(dispositivos)
-    #FIXME: socketsss
-    #socket_emit('refresh_ESP_status')
+    socket_emit('refresh_ESP_status')
     print("Verificación terminada!")
 
 #funcion que envia una solicitud get para checkear conectividad
