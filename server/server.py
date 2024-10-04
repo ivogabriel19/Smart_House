@@ -7,7 +7,10 @@ from apscheduler.triggers.cron import CronTrigger
 from datetime import datetime
 import requests, time, json, os
 
+from routes.views import views_bp
+
 app = Flask(__name__)
+app.register_blueprint(views_bp)  # Registrar el blueprint
 socketio = SocketIO(app)
 
 # Diccionario para almacenar la IP y el estado de los ESP32 registrados
@@ -204,14 +207,6 @@ def eliminar_item(device_id):
     guardar_items(items_actualizados)
     
     return jsonify({"message": f"Ítem {device_id} eliminado exitosamente"}), 200
-
-@app.route('/')
-def index():
-    return render_template('index.html')  # Renderiza el archivo index.html desde la carpeta templates
-
-@app.route('/device')
-def device_page():
-    return render_template('device.html')
 
 #ruta para que se registren los ESP
 @app.route('/register', methods=['POST'])
