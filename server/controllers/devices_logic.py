@@ -137,7 +137,7 @@ def check_esp_status():
             if device['status'] == 'Online': device['last_seen'] = time.time()
     # Guardar los cambios en el archivo después de la verificación
     guardar_items(dispositivos)
-    socket_emit('refresh_ESP_status')
+    socket_emit('refresh_ESP_status', '')
     print("Verificación terminada!")
 
 #funcion que envia una solicitud get para checkear conectividad
