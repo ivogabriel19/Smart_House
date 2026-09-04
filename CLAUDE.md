@@ -8,6 +8,7 @@ Smart House is a distributed IoT home automation system with three layers:
 - **Flask server** running on a Raspberry Pi (central coordinator)
 - **ESP32/ESP8266 microcontroller clients** (sensors and actuators)
 - **Web frontend** served by Flask (HTML/JS/CSS with Socket.IO and Chart.js)
+- /cod-fdp corresponde a "codigo fuera de produccion" esta ahi con fines de documentacion, no se implementa
 
 ## Running the Server
 
