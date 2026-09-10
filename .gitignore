@@ -1,34 +1,28 @@
-# Prerequisites
-*.d
+# ---- Python ----
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
+# ---- Entornos virtuales ----
+entornoVirtual/
+venv/
+.venv/
+env/
 
-# Precompiled Headers
-*.gch
-*.pch
+# ---- Secretos y entorno ----
+.env
+*.env
+!*.env.example
 
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
+# ---- Datos de runtime (se generan solos; ver devices.json.example) ----
+/server/data/*
+!/server/data/devices.json.example
+*.db
+*.sqlite3
 
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
-
-# Executables
-*.exe
-*.out
-*.app
-
-__pycache__
+# ---- Sistema / editor ----
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

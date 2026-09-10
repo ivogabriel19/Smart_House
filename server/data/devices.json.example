@@ -1,0 +1,27 @@
+[
+    {
+        "ID": "ESP32_001",
+        "IP": "192.168.0.100",
+        "MAC": "AA:BB:CC:DD:EE:FF",
+        "status": "Offline",
+        "last_seen": 0,
+        "type": "Actuador",
+        "data": {
+            "switch": "OFF"
+        },
+        "events": []
+    },
+    {
+        "ID": "ESP32_002",
+        "IP": "192.168.0.101",
+        "MAC": "AA:BB:CC:DD:EE:00",
+        "status": "Offline",
+        "last_seen": 0,
+        "type": "Sensor",
+        "data": {
+            "temperatura": "0",
+            "humedad": "0"
+        },
+        "events": []
+    }
+]
