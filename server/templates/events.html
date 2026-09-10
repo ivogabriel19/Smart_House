@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block tittle %} Scheduler Jobs {% endblock %}
+
+{% block headers %} 
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/events_view.css') }}">
+    <script defer type="module" src="{{ url_for('static', filename='js/events.js') }}"></script>
+{% endblock %}
+
+{% block nav_content %}
+    <ul>
+        <li id="btnHome">Home</li>
+    </ul>
+{% endblock %}
+
+{% block main_content %}
+    <div class="container">
+        <h2>Scheduled Jobs</h2>
+        <div id="job-list">
+            <div class="loading">Loading jobs...</div>
+        </div>
+    </div>
+{% endblock %}
