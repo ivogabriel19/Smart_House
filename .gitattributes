@@ -1,0 +1,4 @@
+# Los scripts de shell deben conservar LF aunque se editen en Windows:
+# un CRLF rompe el shebang al ejecutarlos en la Raspberry.
+*.sh text eol=lf
+Dockerfile text eol=lf

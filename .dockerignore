@@ -1,0 +1,11 @@
+.git
+.gitignore
+.gitattributes
+**/__pycache__
+**/*.py[cod]
+server/entornoVirtual
+server/data
+docs
+cod-fdp
+client-boards
+*.md
