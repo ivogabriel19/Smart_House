@@ -1,0 +1,11 @@
+[Unit]
+Description=Smart House — avisar por Telegram que la Pi terminó de bootear
+Wants=network-online.target
+After=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart=/bin/bash -c '/usr/local/bin/sh-notify "🔌 Smart House: la Raspberry ($(hostname)) terminó de bootear."'
+
+[Install]
+WantedBy=multi-user.target

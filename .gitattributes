@@ -1,4 +1,8 @@
-# Los scripts de shell deben conservar LF aunque se editen en Windows:
-# un CRLF rompe el shebang al ejecutarlos en la Raspberry.
-*.sh text eol=lf
+# Estos archivos se ejecutan/parsean en Linux (la Raspberry) y deben conservar
+# LF aunque se editen en Windows: un CRLF rompe el shebang de un script o un
+# unit de systemd.
+*.sh       text eol=lf
 Dockerfile text eol=lf
+*.service  text eol=lf
+*.timer    text eol=lf
+*.env.example text eol=lf
