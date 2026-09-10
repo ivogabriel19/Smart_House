@@ -1,4 +1,12 @@
-Flask
-requests
-flask-socketio
-APScheduler
+# --- App ---
+Flask==3.0.3
+Flask-SocketIO==5.3.6
+python-socketio==5.11.4
+python-engineio==4.9.1
+APScheduler==3.10.4
+requests==2.32.3
+
+# --- Producción (servidor WSGI + worker async para Socket.IO) ---
+# gunicorn debe correr con -k eventlet -w 1 (un solo worker): ver revival_plan.
+gunicorn==22.0.0
+eventlet==0.36.1
