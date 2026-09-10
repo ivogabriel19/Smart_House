@@ -11,9 +11,14 @@ CONFIG_FILE="/etc/smarthouse/deploy.env"
 [ -f "$CONFIG_FILE" ] && set -a && . "$CONFIG_FILE" && set +a
 
 REPO_DIR="${REPO_DIR:-/opt/smarthouse}"
+STATE_FILE="${STATE_FILE:-/var/lib/smarthouse/state.json}"
 NOTIFY="${NOTIFY:-/usr/local/bin/sh-notify}"
 CONTAINER="smarthouse"
 COMPOSE="docker compose -f ${REPO_DIR}/docker-compose.yml"
+
+# Preservar la versión desplegada: si el watchdog tiene que recrear el
+# contenedor con 'up -d', que /health siga reportando el tag y no 'unknown'.
+export SMARTHOUSE_VERSION="$(jq -r '.deployed // "unknown"' "$STATE_FILE" 2>/dev/null || echo unknown)"
 
 notify() { [ -x "$NOTIFY" ] && "$NOTIFY" "$@" || true; }
 

@@ -96,17 +96,24 @@ install -m 755 "$REPO_DIR/deploy/notify.sh"   /usr/local/bin/sh-notify
 install -m 755 "$REPO_DIR/deploy/watchdog.sh" /usr/local/bin/sh-watchdog
 
 # --- 6. Unidades systemd -----------------------------------------------------
+# Se instalan y se habilita el aviso de boot, pero los timers de deploy y
+# watchdog se activan DESPUÉS del primer despliegue: si se activaran ahora, su
+# OnBootSec ya cumplido los dispararía al instante y el watchdog crearía el
+# contenedor por su cuenta, chocando con el primer deploy.
 log "Instalando unidades de systemd…"
 install -m 644 "$REPO_DIR"/deploy/systemd/*.service /etc/systemd/system/
 install -m 644 "$REPO_DIR"/deploy/systemd/*.timer   /etc/systemd/system/
 systemctl daemon-reload
-systemctl enable --now smarthouse-deploy.timer >/dev/null 2>&1 || true
-systemctl enable --now smarthouse-watchdog.timer >/dev/null 2>&1 || true
 systemctl enable smarthouse-boot-notify.service >/dev/null 2>&1 || true
 
 # --- 7. Primer despliegue ----------------------------------------------------
 log "Primer despliegue (build + up; puede tardar unos minutos)…"
 /usr/local/bin/sh-deploy
+
+# --- 7.5 Activar los timers (recién ahora, con el contenedor ya arriba) -------
+log "Activando timers de deploy y watchdog…"
+systemctl enable --now smarthouse-deploy.timer >/dev/null 2>&1 || true
+systemctl enable --now smarthouse-watchdog.timer >/dev/null 2>&1 || true
 
 # --- 8. Verificación ---------------------------------------------------------
 log "Verificación:"
