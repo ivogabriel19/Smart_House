@@ -1,0 +1,91 @@
+{% extends 'base.html' %}
+
+{% block tittle %}Estado del sistema{% endblock %}
+
+{% block headers %}
+<style>
+    .estado-wrap { max-width: 900px; margin: 1rem auto; padding: 0 1rem; }
+    .estado-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+    .card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; }
+    .card h3 { margin: 0 0 .5rem; font-size: .9rem; text-transform: uppercase; color: #666; }
+    .card .val { font-size: 1.4rem; font-weight: 600; }
+    table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    th, td { text-align: left; padding: .4rem .6rem; border-bottom: 1px solid #eee; }
+    .badge { padding: .1rem .5rem; border-radius: 999px; font-size: .8rem; }
+    .Online { background: #d7f5dd; color: #16794c; }
+    .Offline { background: #f5d7d7; color: #7a1616; }
+    .Verificando { background: #fff2cc; color: #7a5c00; }
+    .muted { color: #888; }
+</style>
+{% endblock %}
+
+{% block nav_content %}
+<a href="{{ url_for('views.index') }}">Inicio</a>
+{% endblock %}
+
+{% block main_content %}
+<div class="estado-wrap">
+    <h1>Estado del sistema</h1>
+    <p class="muted" id="actualizado">Cargando…</p>
+
+    <div class="estado-grid">
+        <div class="card"><h3>Versión</h3><div class="val" id="version">—</div></div>
+        <div class="card"><h3>Uptime app</h3><div class="val" id="app_uptime">—</div></div>
+        <div class="card"><h3>Uptime Pi</h3><div class="val" id="host_uptime">—</div></div>
+        <div class="card"><h3>Último deploy</h3><div class="val" id="deploy">—</div></div>
+    </div>
+
+    <h2>Dispositivos</h2>
+    <p id="resumen" class="muted">—</p>
+    <table>
+        <thead><tr><th>ID</th><th>Tipo</th><th>Estado</th><th>Último visto</th></tr></thead>
+        <tbody id="devices"></tbody>
+    </table>
+</div>
+
+<script>
+function fmtDur(s) {
+    if (s == null) return '—';
+    s = Math.floor(s);
+    const d = Math.floor(s / 86400), h = Math.floor((s % 86400) / 3600), m = Math.floor((s % 3600) / 60);
+    if (d) return `${d}d ${h}h`;
+    if (h) return `${h}h ${m}m`;
+    return `${m}m`;
+}
+function fmtTs(sec) {
+    if (!sec) return '—';
+    return new Date(sec * 1000).toLocaleString('es-AR');
+}
+async function cargar() {
+    try {
+        const r = await fetch('/api/system');
+        const d = await r.json();
+        document.getElementById('version').textContent = d.version || '—';
+        document.getElementById('app_uptime').textContent = fmtDur(d.app_uptime);
+        document.getElementById('host_uptime').textContent = fmtDur(d.host_uptime);
+        const dep = d.deploy;
+        document.getElementById('deploy').textContent = dep ? `${dep.deployed} (${dep.result})` : 'sin datos';
+
+        const res = d.devices.resumen;
+        document.getElementById('resumen').textContent =
+            `${res.total} en total · ${res.online} online · ${res.offline} offline` +
+            (res.otros ? ` · ${res.otros} verificando` : '');
+
+        const tbody = document.getElementById('devices');
+        tbody.innerHTML = '';
+        for (const dev of d.devices.lista) {
+            const tr = document.createElement('tr');
+            tr.innerHTML = `<td>${dev.ID ?? '—'}</td><td>${dev.type ?? '—'}</td>` +
+                `<td><span class="badge ${dev.status}">${dev.status}</span></td>` +
+                `<td>${fmtTs(dev.last_seen)}</td>`;
+            tbody.appendChild(tr);
+        }
+        document.getElementById('actualizado').textContent = 'Actualizado ' + new Date().toLocaleTimeString('es-AR');
+    } catch (e) {
+        document.getElementById('actualizado').textContent = 'Error al cargar el estado';
+    }
+}
+cargar();
+setInterval(cargar, 10000);
+</script>
+{% endblock %}

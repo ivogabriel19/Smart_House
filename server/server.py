@@ -1,6 +1,3 @@
-import os
-import time
-
 from flask import Flask
 from flask_socketio import SocketIO, emit
 
@@ -8,18 +5,17 @@ from routes.views import views_bp
 from routes.files_CRUD import files_bp
 from routes.devices import devices_bp
 from routes.events import events_bp
+from routes.system import system_bp
 from controllers.events_logic import scheduler_init, scheduler_shutdown, scheduler
 from services.socket_buffer import pass_socketio
-
-# Metadatos para el endpoint de salud
-APP_START = time.time()
-APP_VERSION = os.environ.get('SMARTHOUSE_VERSION', 'unknown')
+from services import appinfo
 
 app = Flask(__name__)
 app.register_blueprint(views_bp)  # Registrar el blueprint
 app.register_blueprint(files_bp)  # Registrar el blueprint
 app.register_blueprint(devices_bp)  # Registrar el blueprint
 app.register_blueprint(events_bp)  # Registrar el blueprint
+app.register_blueprint(system_bp)  # Observabilidad: /health, /api/system, /estado
 socketio = SocketIO(app)
 pass_socketio(socketio)
 
@@ -30,8 +26,8 @@ pass_socketio(socketio)
 def health():
     return {
         "status": "ok",
-        "version": APP_VERSION,
-        "uptime": round(time.time() - APP_START, 1),
+        "version": appinfo.APP_VERSION,
+        "uptime": appinfo.app_uptime(),
     }, 200
 
 

@@ -22,6 +22,8 @@ services:
 
     volumes:
       - smarthouse-data:/app/data
+      # Estado del desplegador, solo lectura, para /api/system y /estado.
+      - /var/lib/smarthouse:/app/state:ro
 
     healthcheck:
       test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:5000/health').status==200 else 1)"]
