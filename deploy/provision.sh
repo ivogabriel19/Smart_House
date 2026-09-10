@@ -71,6 +71,12 @@ else
     git config --global --add safe.directory "$REPO_DIR" 2>/dev/null || true
 fi
 
+# El tooling (deploy/) vive en main. Un despliegue previo pudo dejar el repo
+# en un tag (HEAD detached, sin deploy/ en el árbol); volver a main garantiza
+# que los scripts y unidades estén presentes para instalarlos. sh-deploy vuelve
+# a hacer checkout del tag de la app más abajo.
+git -C "$REPO_DIR" checkout --quiet -B main origin/main
+
 # Secretos/config: crear desde los ejemplos solo si no existen (no pisar).
 if [ ! -f "$ETC_DIR/deploy.env" ]; then
     cp "$REPO_DIR/deploy/deploy.env.example" "$ETC_DIR/deploy.env"
