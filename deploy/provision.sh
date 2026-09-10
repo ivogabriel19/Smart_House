@@ -90,9 +90,10 @@ if [ ! -f "$ETC_DIR/app.env" ]; then
 fi
 
 # --- 5. Instalar scripts del pipeline ---------------------------------------
-log "Instalando sh-deploy y sh-notify…"
-install -m 755 "$REPO_DIR/deploy/deploy.sh"  /usr/local/bin/sh-deploy
-install -m 755 "$REPO_DIR/deploy/notify.sh"  /usr/local/bin/sh-notify
+log "Instalando sh-deploy, sh-notify y sh-watchdog…"
+install -m 755 "$REPO_DIR/deploy/deploy.sh"   /usr/local/bin/sh-deploy
+install -m 755 "$REPO_DIR/deploy/notify.sh"   /usr/local/bin/sh-notify
+install -m 755 "$REPO_DIR/deploy/watchdog.sh" /usr/local/bin/sh-watchdog
 
 # --- 6. Unidades systemd -----------------------------------------------------
 log "Instalando unidades de systemd…"
@@ -100,6 +101,7 @@ install -m 644 "$REPO_DIR"/deploy/systemd/*.service /etc/systemd/system/
 install -m 644 "$REPO_DIR"/deploy/systemd/*.timer   /etc/systemd/system/
 systemctl daemon-reload
 systemctl enable --now smarthouse-deploy.timer >/dev/null 2>&1 || true
+systemctl enable --now smarthouse-watchdog.timer >/dev/null 2>&1 || true
 systemctl enable smarthouse-boot-notify.service >/dev/null 2>&1 || true
 
 # --- 7. Primer despliegue ----------------------------------------------------

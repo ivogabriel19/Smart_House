@@ -1,0 +1,8 @@
+[Unit]
+Description=Smart House — watchdog del contenedor (reinicia si unhealthy)
+Wants=docker.service
+After=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/sh-watchdog

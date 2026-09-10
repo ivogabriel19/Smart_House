@@ -1,0 +1,10 @@
+[Unit]
+Description=Smart House — correr el watchdog del contenedor cada minuto
+
+[Timer]
+OnBootSec=3min
+OnUnitActiveSec=1min
+Persistent=true
+
+[Install]
+WantedBy=timers.target
